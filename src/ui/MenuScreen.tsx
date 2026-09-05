@@ -292,6 +292,32 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                     <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-sun-400" />
                     За забег капает роса — валюта для скинов и улучшений в магазине.
                   </li>
+                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
+                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blood-400" />
+                    Боты хитры: охотятся стаей, добивают раненых, отступают лечиться и охотятся за зельями.
+                  </li>
+                </HelpCard>
+                <HelpCard title="Случайные зелья">
+                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
+                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blood-400" />
+                    <span><b className="text-blood-400">Зелье силы</b> — урон ×1.4 на 8 секунд.</span>
+                  </li>
+                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
+                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-dew-400" />
+                    <span><b className="text-dew-400">Зелье ветра</b> — скорость ×1.5 на 8 секунд.</span>
+                  </li>
+                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
+                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-grass-400" />
+                    <span><b className="text-grass-400">Зелье здоровья</b> — сразу +45% сил.</span>
+                  </li>
+                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
+                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full" style={{ background: "#c58cff" }} />
+                    <span><b style={{ color: "#c58cff" }}>Зелье роста</b> — мгновенно +1 уровень (редкое!).</span>
+                  </li>
+                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
+                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-sun-400" />
+                    Зелья видны на миникарте цветными точками — и боты тоже их подбирают, успевай первым!
+                  </li>
                 </HelpCard>
               </div>
 

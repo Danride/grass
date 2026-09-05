@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Engine, HudData } from "../game/engine";
-import { IconBot, IconClock, IconGrass, IconMuted, IconPause, IconSound } from "./icons";
-import { fmt, fmtTime } from "../game/meta";
+import { IconBlade, IconBot, IconClock, IconGrass, IconLegs, IconMuted, IconPause, IconSound } from "./icons";
 
 interface HUDProps {
   hud: HudData;
@@ -14,251 +13,312 @@ interface HUDProps {
 
 export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDProps) {
   const mapRef = useRef<HTMLCanvasElement>(null);
+  const [showHint, setShowHint] = useState(true);
 
   useEffect(() => {
-    if (!engine || !mapRef.current) return;
-    const id = window.setInterval(() => {
-      if (mapRef.current) engine.renderMinimap(mapRef.current);
-    }, 180);
-    return () => window.clearInterval(id);
+    const id = setInterval(() => {
+      if (engine && mapRef.current) engine.renderMinimap(mapRef.current);
+    }, 250);
+    return () => clearInterval(id);
   }, [engine]);
 
-  const hpPct = (hud.hp / hud.maxHp) * 100;
-  const xpPct = Math.min(100, (hud.xp / hud.xpNext) * 100);
+  useEffect(() => {
+    const id = setTimeout(() => setShowHint(false), 8000);
+    return () => clearTimeout(id);
+  }, []);
+
+  const hpPct = Math.max(0, Math.min(100, (hud.hp / hud.maxHp) * 100));
+  const xpPct = Math.max(0, Math.min(100, (hud.xp / hud.xpNext) * 100));
+  const mm = Math.floor(hud.time / 60);
+  const ss = String(hud.time % 60).padStart(2, "0");
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-10 font-sans">
-      {/* ---- верх слева: счёт + уровень ---- */}
-      <div className="absolute left-2.5 top-2.5 flex items-start gap-2 sm:left-4 sm:top-4">
-        <div className="hud-chip flex flex-col items-center px-2.5 py-1.5">
-          <div className="font-display text-[10px] uppercase leading-none text-sun-400">ур.</div>
-          <div className="font-display text-2xl leading-tight text-grass-300 drop-shadow-[0_2px_0_rgba(7,17,8,0.9)]">
-            {hud.level}
-          </div>
-        </div>
-        <div className="hud-chip min-w-[128px] px-2.5 py-1.5 sm:min-w-[190px]">
-          <div className="flex items-baseline justify-between">
-            <span className="font-display text-[10px] uppercase tracking-wide text-grass-200/70">Очки</span>
-            <span className="font-display text-base text-grass-200 drop-shadow-[0_2px_0_rgba(7,17,8,0.9)] sm:text-xl">
-              {fmt(hud.score)}
+    <div className="pointer-events-none absolute inset-0 z-10 select-none">
+      {/* ======== верх: игрок ======== */}
+      <div className="absolute left-2 top-2 flex max-w-[62%] flex-col gap-1.5 sm:left-3 sm:top-3">
+        <div className="hud-chip px-2.5 py-2 sm:w-64">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-display text-[13px] leading-none text-grass-300">
+              УР. <span className="text-lg text-grass-200">{hud.level}</span>
+            </span>
+            <span className="font-display text-[13px] leading-none text-sun-300">
+              {hud.score.toLocaleString("ru-RU")}
             </span>
           </div>
-          <div className="mt-1 h-2.5 overflow-hidden rounded-sm border border-pit-600 bg-pit-950">
+          <div className="mt-1.5 h-2.5 w-full overflow-hidden rounded-full border border-pit-600 bg-pit-950">
             <div
-              className="h-full bg-gradient-to-r from-sun-600 to-sun-400 transition-[width] duration-200"
+              className="h-full rounded-full bg-gradient-to-r from-grass-700 via-grass-500 to-grass-300 transition-[width] duration-150"
               style={{ width: xpPct + "%" }}
             />
           </div>
-          <div className="mt-1 h-2.5 overflow-hidden rounded-sm border border-pit-600 bg-pit-950">
+          <div className="mt-1 h-2 w-full overflow-hidden rounded-full border border-pit-600 bg-pit-950">
             <div
-              className={`h-full transition-[width] duration-150 ${
-                hpPct > 50
-                  ? "bg-gradient-to-r from-grass-600 to-grass-400"
-                  : hpPct > 25
-                    ? "bg-gradient-to-r from-sun-600 to-sun-400"
-                    : "bg-gradient-to-r from-blood-600 to-blood-400"
-              }`}
-              style={{ width: hpPct + "%" }}
+              className="h-full rounded-full transition-[width] duration-150"
+              style={{
+                width: hpPct + "%",
+                background:
+                  hpPct > 50
+                    ? "linear-gradient(90deg,#f4432e,#ff7059)"
+                    : hpPct > 25
+                      ? "linear-gradient(90deg,#c78d0a,#ffd23f)"
+                      : "linear-gradient(90deg,#8a1608,#f4432e)",
+              }}
             />
           </div>
-          <div className="mt-0.5 flex justify-between text-[10px] font-bold text-grass-200/55">
-            <span>опыт {fmt(hud.xp)}/{fmt(hud.xpNext)}</span>
-            <span>силы {hud.hp}</span>
+          <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-pit-950">
+            <div
+              className={`h-full rounded-full bg-sun-400 transition-[width] duration-150 ${hud.boosting ? "anim-blink" : ""}`}
+              style={{ width: hud.boost + "%" }}
+            />
           </div>
         </div>
+
+        {/* активные зелья */}
+        {(hud.buffs.power > 0 || hud.buffs.speed > 0) && (
+          <div className="flex gap-1.5">
+            {hud.buffs.power > 0 && (
+              <BuffChip color="#ff5340" label="Сила ×1.4" t={hud.buffs.power} icon={<IconBlade size={13} />} />
+            )}
+            {hud.buffs.speed > 0 && (
+              <BuffChip color="#59dcff" label="Ветер ×1.5" t={hud.buffs.speed} icon={<IconLegs size={13} />} />
+            )}
+          </div>
+        )}
       </div>
 
-      {/* ---- верх справа: миникарта + статистика + кнопки ---- */}
-      <div className="absolute right-2.5 top-2.5 flex flex-col items-end gap-2 sm:right-4 sm:top-4">
-        <div className="flex items-center gap-2">
-          <div className="hud-chip hidden items-center gap-2 px-2 py-1 text-[11px] font-bold text-grass-200/80 sm:flex">
-            <span className="flex items-center gap-1"><IconGrass size={13} className="text-grass-400" />{fmt(hud.grass)}</span>
-            <span className="flex items-center gap-1"><IconBot size={13} className="text-blood-400" />{hud.kills}</span>
-            <span className="flex items-center gap-1"><IconClock size={13} className="text-dew-400" />{fmtTime(hud.time)}</span>
-          </div>
+      {/* ======== верх справа: кнопки и миникарта ======== */}
+      <div className="absolute right-2 top-2 flex flex-col items-end gap-1.5 sm:right-3 sm:top-3">
+        <div className="pointer-events-auto flex gap-1.5">
           <button
             onClick={onToggleMute}
-            className="hud-chip pointer-events-auto grid h-9 w-9 place-items-center text-grass-300 transition hover:text-grass-200 active:scale-90"
+            className="hud-chip grid h-9 w-9 place-items-center text-grass-300 active:scale-95"
             aria-label="звук"
           >
             {muted ? <IconMuted size={17} /> : <IconSound size={17} />}
           </button>
           <button
             onClick={onPause}
-            className="hud-chip pointer-events-auto grid h-9 w-9 place-items-center text-grass-300 transition hover:text-grass-200 active:scale-90"
+            className="hud-chip grid h-9 w-9 place-items-center text-grass-300 active:scale-95"
             aria-label="пауза"
           >
             <IconPause size={17} />
           </button>
         </div>
-        <canvas ref={mapRef} width={148} height={148} className="hud-chip hidden h-[148px] w-[148px] md:block" />
-      </div>
-
-      {/* ---- лидерборд ---- */}
-      <div className="hud-chip absolute left-2.5 top-[104px] hidden w-48 px-2.5 py-2 md:block sm:left-4 sm:top-[120px]">
-        <div className="flex items-center justify-between">
-          <div className="font-display text-[10px] uppercase tracking-wider text-sun-400">Топ косарей</div>
-          <div className="flex items-center gap-1 font-display text-[10px] text-grass-300">
-            <span className="anim-blink inline-block h-1.5 w-1.5 rounded-full bg-grass-400" />
-            {hud.players} в поле
-          </div>
+        <div className="hud-chip p-1.5">
+          <canvas ref={mapRef} width={132} height={132} className="block h-[100px] w-[100px] sm:h-[132px] sm:w-[132px]" />
         </div>
-        <div className="mt-1 space-y-0.5">
-          {hud.leaderboard.map((r, i) => (
-            <div
-              key={r.name + i}
-              className={`flex items-center justify-between rounded px-1.5 py-0.5 text-[11px] ${
-                r.me ? "bg-grass-700/50 font-bold text-grass-200" : "text-grass-200/75"
-              }`}
-            >
-              <span className="truncate">
-                <span className="mr-1 inline-block w-3 font-display text-[10px] text-sun-400">{i + 1}</span>
-                {r.name}
-                <span className="ml-1 text-[10px] text-grass-200/45">ур.{r.level}</span>
-              </span>
-              <span className="ml-2 font-display text-[10px]">{fmt(r.score)}</span>
+        <div className="hud-chip hidden w-48 px-2.5 py-2 md:block">
+          <div className="flex items-center justify-between">
+            <div className="font-display text-[10px] uppercase tracking-wider text-sun-400">Топ косарей</div>
+            <div className="flex items-center gap-1 font-display text-[10px] text-grass-300">
+              <span className="anim-blink inline-block h-1.5 w-1.5 rounded-full bg-grass-400" />
+              {hud.players} в поле
             </div>
-          ))}
+          </div>
+          <div className="mt-1 space-y-0.5">
+            {hud.leaderboard.map((r, i) => (
+              <div
+                key={r.name + i}
+                className={`flex items-center justify-between rounded px-1.5 py-0.5 text-[11px] ${
+                  r.me ? "bg-grass-700/50 font-bold text-grass-200" : "text-grass-200/75"
+                }`}
+              >
+                <span className="truncate">
+                  <span className="mr-1 inline-block w-3 font-display text-[10px] text-sun-400">{i + 1}</span>
+                  {r.name}
+                  <span className="ml-1 text-[9px] text-grass-200/45">ур.{r.level}</span>
+                </span>
+                <span className="ml-2 shrink-0 font-display text-[10px]">{r.score.toLocaleString("ru-RU")}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* ---- комбо ---- */}
-      {hud.combo >= 15 && (
+      {/* ======== баннер зоны ======== */}
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 sm:bottom-auto sm:left-1/2 sm:top-3">
         <div
-          key={Math.floor(hud.combo / 15)}
-          className="anim-combo absolute left-1/2 top-24 -translate-x-1/2 text-center sm:top-28"
+          key={hud.zone}
+          className={`anim-zone hud-chip px-3 py-1.5 font-display text-[12px] uppercase tracking-wider sm:text-sm ${
+            hud.danger ? "text-blood-400" : "text-grass-200/90"
+          }`}
         >
-          <div className="font-display text-3xl text-sun-400 drop-shadow-[0_3px_0_rgba(7,17,8,0.9)] sm:text-4xl">
-            ×{hud.comboMult.toFixed(2)}
-          </div>
-          <div className="text-[11px] font-bold uppercase tracking-widest text-sun-300/80">
-            жатва · {hud.combo}
-          </div>
-        </div>
-      )}
-
-      {/* ---- название зоны ---- */}
-      <div key={hud.zone} className="anim-zone absolute left-1/2 top-9 -translate-x-1/2 sm:top-11">
-        <div className="hud-chip px-3 py-1 font-display text-xs uppercase tracking-widest text-sun-300 sm:text-sm">
           {hud.zone}
+          {hud.danger && <span className="anim-blink ml-2 text-[10px]">жжёт!</span>}
         </div>
       </div>
-      {hud.danger && (
-        <div className="absolute left-1/2 top-[72px] -translate-x-1/2 font-display text-[11px] uppercase tracking-widest text-blood-400 sm:top-[76px]">
-          <span className="anim-blink">Земля жжёт! Нужен уровень 12+</span>
-        </div>
-      )}
 
-      {/* ---- нижняя полоса буста (десктоп) ---- */}
-      {!isTouch && (
-        <div className="absolute bottom-3 left-1/2 w-52 -translate-x-1/2">
-          <div className="h-2 overflow-hidden rounded-full border border-pit-600 bg-pit-950/80">
-            <div
-              className={`h-full rounded-full transition-[width] duration-150 ${
-                hud.boosting ? "bg-gradient-to-r from-sun-500 to-sun-300" : "bg-gradient-to-r from-dew-500 to-dew-300"
-              }`}
-              style={{ width: hud.boost + "%" }}
-            />
-          </div>
-          <div className="mt-0.5 text-center text-[10px] font-bold uppercase tracking-wider text-grass-200/45">
-            Пробел — ускорение
+      {/* ======== комбо ======== */}
+      {hud.combo > 4 && (
+        <div className="absolute left-1/2 top-[22%] -translate-x-1/2">
+          <div key={hud.combo} className="anim-combo text-center">
+            <div className="font-display text-3xl text-sun-400 drop-shadow-[0_3px_0_rgba(7,17,8,0.9)] sm:text-4xl">
+              ×{hud.comboMult.toFixed(2)}
+            </div>
+            <div className="font-display text-[10px] uppercase tracking-[0.3em] text-sun-300/80">
+              комбо {hud.combo}
+            </div>
           </div>
         </div>
       )}
 
-      {isTouch && <TouchControls hud={hud} engine={engine} />}
+      {/* ======== низ слева: статистика ======== */}
+      <div className="absolute bottom-2 left-2 flex flex-col gap-1.5 sm:bottom-3 sm:left-3">
+        <div className="hud-chip flex items-center gap-2 px-2.5 py-1.5 text-[12px] text-grass-200/85">
+          <IconBot size={14} className="text-blood-400" />
+          <span className="font-display">{hud.kills}</span>
+          <IconGrass size={14} className="ml-1 text-grass-400" />
+          <span className="font-display">{hud.grass.toLocaleString("ru-RU")}</span>
+          <IconClock size={14} className="ml-1 text-dew-400" />
+          <span className="font-display">
+            {mm}:{ss}
+          </span>
+        </div>
+      </div>
+
+      {/* ======== обучение в начале ======== */}
+      {showHint && (
+        <div className="absolute bottom-[26%] left-1/2 w-[92%] max-w-sm -translate-x-1/2 transition-opacity duration-700 sm:bottom-8">
+          <div className="hud-chip px-3 py-2.5 text-center text-[12px] leading-relaxed text-grass-200/90">
+            {isTouch ? (
+              <>
+                Веди <b className="text-grass-300">джойстиком слева</b>, буст — кнопка справа.
+                <br />
+                Коси пшеницу, подбирай <b className="text-sun-300">зелья</b>, охоться на зелёных ботов!
+              </>
+            ) : (
+              <>
+                Двигайся <b className="text-grass-300">мышью или WASD</b>, буст — <b className="text-sun-300">Пробел</b>.
+                <br />
+                Коси пшеницу, подбирай <b className="text-sun-300">зелья</b>, охоться на зелёных ботов!
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ======== мобильные контролы ======== */}
+      {isTouch && <TouchControls engine={engine} />}
     </div>
   );
 }
 
-/* ================= сенсорное управление ================= */
+function BuffChip({ color, label, t, icon }: { color: string; label: string; t: number; icon: React.ReactNode }) {
+  return (
+    <div
+      className="hud-chip anim-pop flex items-center gap-1.5 px-2 py-1 text-[11px] font-bold"
+      style={{ borderColor: color, color }}
+    >
+      {icon}
+      <span className="font-display">{label}</span>
+      <span className="opacity-80">{Math.ceil(t)}с</span>
+      <span className="ml-0.5 inline-block h-1 w-8 overflow-hidden rounded-full bg-pit-950 align-middle">
+        <span
+          className="block h-full rounded-full"
+          style={{ width: Math.min(100, (t / 8) * 100) + "%", background: color }}
+        />
+      </span>
+    </div>
+  );
+}
 
-function TouchControls({ hud, engine }: { hud: HudData; engine: Engine | null }) {
-  const [stick, setStick] = useState<{ ox: number; oy: number; dx: number; dy: number } | null>(null);
+/* ================= мобильные контролы ================= */
+
+function TouchControls({ engine }: { engine: Engine | null }) {
+  const zoneRef = useRef<HTMLDivElement>(null);
+  const knobRef = useRef<HTMLDivElement>(null);
+  const pidRef = useRef<number | null>(null);
+  const originRef = useRef({ x: 0, y: 0 });
+  const R = 62;
 
   useEffect(() => {
-    let id: number | null = null;
-    let ox = 0, oy = 0;
-    const R = 58;
+    const zone = zoneRef.current;
+    const knob = knobRef.current;
+    if (!zone || !knob || !engine) return;
+
+    const setKnob = (dx: number, dy: number) => {
+      knob.style.transform = `translate(${dx}px, ${dy}px)`;
+      knob.style.opacity = "1";
+    };
+    const reset = () => {
+      knob.style.opacity = "0";
+      knob.style.transform = "translate(0,0)";
+    };
 
     const down = (e: PointerEvent) => {
-      if (e.clientX > window.innerWidth * 0.62) return;
-      id = e.pointerId;
-      ox = e.clientX;
-      oy = e.clientY;
-      setStick({ ox, oy, dx: 0, dy: 0 });
-      e.preventDefault();
+      if (pidRef.current !== null) return;
+      pidRef.current = e.pointerId;
+      zone.setPointerCapture(e.pointerId);
+      originRef.current = { x: e.clientX, y: e.clientY };
+      knob.style.left = e.clientX + "px";
+      knob.style.top = e.clientY + "px";
+      setKnob(0, 0);
+      engine.setJoy(0, 0, true);
     };
     const move = (e: PointerEvent) => {
-      if (e.pointerId !== id) return;
-      let dx = e.clientX - ox;
-      let dy = e.clientY - oy;
+      if (e.pointerId !== pidRef.current) return;
+      let dx = e.clientX - originRef.current.x;
+      let dy = e.clientY - originRef.current.y;
       const d = Math.hypot(dx, dy);
-      if (d > R) { dx = (dx / d) * R; dy = (dy / d) * R; }
-      setStick({ ox, oy, dx, dy });
-      engine?.setJoy(dx / R, dy / R, true);
-      e.preventDefault();
+      if (d > R) {
+        dx = (dx / d) * R;
+        dy = (dy / d) * R;
+      }
+      setKnob(dx, dy);
+      engine.setJoy(dx / R, dy / R, true);
     };
     const up = (e: PointerEvent) => {
-      if (e.pointerId !== id) return;
-      id = null;
-      setStick(null);
-      engine?.setJoy(0, 0, false);
+      if (e.pointerId !== pidRef.current) return;
+      pidRef.current = null;
+      reset();
+      engine.setJoy(0, 0, false);
     };
 
-    window.addEventListener("pointerdown", down, { passive: false });
-    window.addEventListener("pointermove", move, { passive: false });
-    window.addEventListener("pointerup", up);
-    window.addEventListener("pointercancel", up);
+    zone.addEventListener("pointerdown", down);
+    zone.addEventListener("pointermove", move);
+    zone.addEventListener("pointerup", up);
+    zone.addEventListener("pointercancel", up);
     return () => {
-      window.removeEventListener("pointerdown", down);
-      window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerup", up);
-      window.removeEventListener("pointercancel", up);
+      zone.removeEventListener("pointerdown", down);
+      zone.removeEventListener("pointermove", move);
+      zone.removeEventListener("pointerup", up);
+      zone.removeEventListener("pointercancel", up);
     };
   }, [engine]);
 
   return (
     <>
-      {stick && (
-        <div
-          className="pointer-events-none absolute z-20 h-32 w-32 rounded-full border-2 border-grass-400/40 bg-pit-950/40"
-          style={{ left: stick.ox - 64, top: stick.oy - 64 }}
-        >
-          <div
-            className="absolute left-1/2 top-1/2 h-14 w-14 rounded-full border-2 border-grass-300 bg-grass-500/70 shadow-[0_0_18px_rgba(141,239,74,0.5)]"
-            style={{ transform: `translate(calc(-50% + ${stick.dx}px), calc(-50% + ${stick.dy}px))` }}
-          />
-        </div>
-      )}
-      {!stick && (
-        <div className="absolute bottom-24 left-6 z-10 grid h-24 w-24 place-items-center rounded-full border-2 border-dashed border-grass-400/25 text-[10px] font-bold uppercase tracking-wider text-grass-200/35">
-          веди пальцем
-        </div>
-      )}
-      <button
-        className={`pointer-events-auto absolute bottom-8 right-5 z-20 h-20 w-20 touch-none select-none rounded-full border-4 font-display text-[13px] uppercase transition active:scale-95 ${
-          hud.boosting
-            ? "border-sun-300 bg-sun-500 text-pit-950 shadow-[0_0_26px_rgba(255,210,63,0.7)]"
-            : "border-dew-400/60 bg-pit-800/85 text-dew-300"
-        }`}
-        style={{ touchAction: "none" }}
-        onPointerDown={(e) => {
-          e.preventDefault();
-          engine?.setBoost(true);
-        }}
-        onPointerUp={() => engine?.setBoost(false)}
-        onPointerLeave={() => engine?.setBoost(false)}
-        onPointerCancel={() => engine?.setBoost(false)}
+      {/* зона джойстика — левая половина */}
+      <div ref={zoneRef} className="pointer-events-auto absolute bottom-0 left-0 top-24 w-1/2 touch-none" />
+      <div
+        ref={knobRef}
+        className="pointer-events-none absolute z-20 -ml-[62px] -mt-[62px] h-[124px] w-[124px] opacity-0 transition-opacity duration-150"
+        style={{ left: 0, top: 0 }}
       >
-        Буст
-        <span className="mx-auto mt-0.5 block h-1 w-10 overflow-hidden rounded-full bg-pit-950/60">
-          <span
-            className="block h-full rounded-full bg-dew-400 transition-[width]"
-            style={{ width: hud.boost + "%" }}
-          />
-        </span>
-      </button>
+        <div className="absolute inset-0 rounded-full border-2 border-grass-400/50 bg-pit-950/40" />
+        <div className="absolute left-1/2 top-1/2 h-[58px] w-[58px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-grass-300 bg-grass-500/80 shadow-[0_4px_14px_rgba(0,0,0,0.4)]" />
+      </div>
+
+      {/* кнопка буста */}
+      <BoostButton engine={engine} />
     </>
+  );
+}
+
+function BoostButton({ engine }: { engine: Engine | null }) {
+  const set = (on: boolean) => (e: React.PointerEvent) => {
+    e.preventDefault();
+    engine?.setBoost(on);
+  };
+  return (
+    <button
+      onPointerDown={set(true)}
+      onPointerUp={set(false)}
+      onPointerLeave={set(false)}
+      onPointerCancel={set(false)}
+      className="pointer-events-auto absolute bottom-7 right-5 z-20 grid h-24 w-24 touch-none place-items-center rounded-full border-4 border-sun-600 bg-sun-400/85 font-display text-base uppercase text-pit-950 shadow-[0_6px_0_#8a6206,0_12px_28px_rgba(0,0,0,0.45)] active:translate-y-1 active:shadow-[0_2px_0_#8a6206]"
+    >
+      Буст
+    </button>
   );
 }

@@ -12,9 +12,9 @@ const TAU = Math.PI * 2;
 export type BiomeId =
   | "wheat"
   | "ripe"
-  | "dry"
   | "rye"
   | "poppy"
+  | "dry"
   | "swamp"
   | "snow"
   | "desert"
@@ -39,74 +39,56 @@ interface BiomeDef {
 
 const BIOMES: Record<BiomeId, BiomeDef> = {
   wheat: {
-    name: "Пшеничное поле",
-    ground: "#8a6134", groundAlt: "#7f592f",
-    blades: ["#e6b74f", "#d9a63f", "#f0c862"],
-    density: 22, hMin: 14, hMax: 28,
-    xp: 1, slow: 1, flower: 0, flowerColors: [],
-    cactus: 0, ember: false, speckle: "#6e4c26",
+    name: "Пшеничное поле", ground: "#8a6134", groundAlt: "#815a2f",
+    blades: ["#d9a83f", "#c99a38", "#e6b74f"], density: 24, hMin: 20, hMax: 34,
+    xp: 2, slow: 1, flower: 0.015, flowerColors: ["#fff2d0"],
+    cactus: 0, ember: false, speckle: "#6b4a24",
   },
   ripe: {
-    name: "Спелое поле",
-    ground: "#9a7038", groundAlt: "#906834",
-    blades: ["#f2c65e", "#e6b54a", "#ffd678"],
-    density: 26, hMin: 18, hMax: 32,
-    xp: 2, slow: 0.98, flower: 0, flowerColors: [],
-    cactus: 0, ember: false, speckle: "#7a582b",
-  },
-  dry: {
-    name: "Сухое поле",
-    ground: "#7a5527", groundAlt: "#714e24",
-    blades: ["#c8a04a", "#b58d3b", "#d4ad55"],
-    density: 18, hMin: 10, hMax: 20,
-    xp: 3, slow: 1.02, flower: 0, flowerColors: [],
-    cactus: 0.3, ember: false, speckle: "#5e401e",
+    name: "Спелое поле", ground: "#9a7038", groundAlt: "#916934",
+    blades: ["#eab94f", "#dcab42", "#f4c862"], density: 26, hMin: 18, hMax: 30,
+    xp: 1, slow: 1, flower: 0.02, flowerColors: ["#fff2d0"],
+    cactus: 0, ember: false, speckle: "#77552a",
   },
   rye: {
-    name: "Высокая рожь",
-    ground: "#6e4c24", groundAlt: "#664622",
-    blades: ["#d9a83f", "#c39332", "#e6b84f"],
-    density: 28, hMin: 24, hMax: 40,
-    xp: 2, slow: 0.95, flower: 0, flowerColors: [],
-    cactus: 0, ember: false, speckle: "#54391b",
+    name: "Высокая рожь", ground: "#6e4c22", groundAlt: "#66461f",
+    blades: ["#b98c33", "#a87e2c", "#c99a3f"], density: 30, hMin: 30, hMax: 48,
+    xp: 3, slow: 0.94, flower: 0, flowerColors: [],
+    cactus: 0, ember: false, speckle: "#503718",
   },
   poppy: {
-    name: "Маковое поле",
-    ground: "#96703a", groundAlt: "#8d6836",
-    blades: ["#e0b252", "#d2a243", "#eec25e"],
-    density: 20, hMin: 12, hMax: 24,
-    xp: 3, slow: 1, flower: 0.2, flowerColors: ["#ff5040"],
-    cactus: 0, ember: false, speckle: "#785a2e",
+    name: "Маковое поле", ground: "#96652f", groundAlt: "#8d5e2b",
+    blades: ["#cfa044", "#c1923c", "#dcab4f"], density: 22, hMin: 16, hMax: 28,
+    xp: 3, slow: 1, flower: 0.3, flowerColors: ["#ff5040", "#ff7a3d", "#ff5040"],
+    cactus: 0, ember: false, speckle: "#6e4a20",
+  },
+  dry: {
+    name: "Сухое поле", ground: "#7a5527", groundAlt: "#724f24",
+    blades: ["#b08a3a", "#9c7a30", "#c49a44"], density: 18, hMin: 12, hMax: 22,
+    xp: 4, slow: 1, flower: 0, flowerColors: [],
+    cactus: 0.35, ember: false, speckle: "#59401d",
   },
   swamp: {
-    name: "Гнилые топи",
-    ground: "#47663a", groundAlt: "#405f35",
-    blades: ["#5e8a4a", "#6f9a52", "#527d42"],
-    density: 20, hMin: 14, hMax: 26,
+    name: "Гнилые топи", ground: "#47663a", groundAlt: "#405f35",
+    blades: ["#5e8a4a", "#6f9a52", "#527d42"], density: 20, hMin: 14, hMax: 26,
     xp: 2, slow: 0.72, flower: 0.02, flowerColors: ["#c58cff"],
     cactus: 0, ember: false, speckle: "#31502a",
   },
   snow: {
-    name: "Мерзлота",
-    ground: "#dcebf0", groundAlt: "#cfe2e8",
-    blades: ["#a8d4e0", "#bfe0e8", "#93c6d4"],
-    density: 16, hMin: 8, hMax: 18,
+    name: "Мерзлота", ground: "#dcebf0", groundAlt: "#cfe2e8",
+    blades: ["#a8d4e0", "#bfe0e8", "#93c6d4"], density: 16, hMin: 8, hMax: 18,
     xp: 4, slow: 0.85, flower: 0, flowerColors: [],
     cactus: 0, ember: false, speckle: "#b7d4de",
   },
   desert: {
-    name: "Сухие пески",
-    ground: "#d3ac5c", groundAlt: "#c9a252",
-    blades: ["#c9a54a", "#b8933f", "#d9b862"],
-    density: 12, hMin: 8, hMax: 16,
+    name: "Сухие пески", ground: "#d3ac5c", groundAlt: "#c9a252",
+    blades: ["#c9a54a", "#b8933f", "#d9b862"], density: 12, hMin: 8, hMax: 16,
     xp: 4, slow: 1, flower: 0, flowerColors: [],
     cactus: 0.55, ember: false, speckle: "#b28d43",
   },
   magma: {
-    name: "Пепелища",
-    ground: "#3b2b26", groundAlt: "#332420",
-    blades: ["#ff8c3d", "#ffb03d", "#e05a2a"],
-    density: 18, hMin: 10, hMax: 24,
+    name: "Пепелища", ground: "#3b2b26", groundAlt: "#332420",
+    blades: ["#ff8c3d", "#ffb03d", "#e05a2a"], density: 18, hMin: 10, hMax: 24,
     xp: 6, slow: 1, flower: 0, flowerColors: [],
     cactus: 0, ember: true, speckle: "#ff6a2a",
   },
@@ -183,6 +165,33 @@ export interface EntSkin {
   body: string; rim: string; blade: string; bladeRim: string; trail: string;
 }
 
+export type PotionKind = "power" | "speed" | "heal" | "growth";
+
+export interface Potion {
+  id: number;
+  x: number;
+  y: number;
+  kind: PotionKind;
+  born: number;
+}
+
+export const POTION_COLORS: Record<PotionKind, string> = {
+  power: "#ff5340",
+  speed: "#59dcff",
+  heal: "#8def4a",
+  growth: "#c58cff",
+};
+
+type Tactic = "roam" | "hunt" | "flee" | "heal" | "loot";
+
+const TACTIC_COLORS: Record<Tactic, string> = {
+  roam: "#8f8f7a",
+  hunt: "#ff5340",
+  flee: "#59dcff",
+  heal: "#8def4a",
+  loot: "#ffd23f",
+};
+
 interface Ent {
   id: number; name: string; isPlayer: boolean;
   x: number; y: number; vx: number; vy: number; dir: number;
@@ -194,16 +203,19 @@ interface Ent {
   hitCd: number; hurtT: number; shieldT: number;
   dead: boolean;
   tx: number; ty: number; retarget: number;
-  mode: "wander" | "chase" | "flee";
+  tactic: Tactic;
+  strafe: number; strafeT: number;
+  dashT: number; dashCd: number;
+  buffs: { power: number; speed: number };
   levelCap: number;
 }
 
 const BOT_SKINS: EntSkin[] = [
   { body: "#58b64a", rim: "#245c1e", blade: "#e8f6da", bladeRim: "#9db88c", trail: "#58b64a" },
-  { body: "#c98f4a", rim: "#6e4318", blade: "#f2e0c8", bladeRim: "#b59a72", trail: "#c98f4a" },
   { body: "#7fb069", rim: "#3d5a2e", blade: "#eef5e0", bladeRim: "#a3b18a", trail: "#7fb069" },
+  { body: "#c9803d", rim: "#6e4318", blade: "#f2e0c8", bladeRim: "#b59a72", trail: "#c9803d" },
   { body: "#5a9fb0", rim: "#274f5a", blade: "#dff2f5", bladeRim: "#8fb6bd", trail: "#5a9fb0" },
-  { body: "#d9b054", rim: "#7a5c1e", blade: "#f7ecc8", bladeRim: "#c0a45e", trail: "#d9b054" },
+  { body: "#a3b18a", rim: "#58614a", blade: "#eef2e4", bladeRim: "#b8c0a8", trail: "#a3b18a" },
   { body: "#b05a5a", rim: "#5c2727", blade: "#f5dede", bladeRim: "#bd8f8f", trail: "#b05a5a" },
 ];
 
@@ -222,6 +234,7 @@ export interface HudData {
   combo: number; comboMult: number;
   zone: string; danger: boolean;
   players: number;
+  buffs: { power: number; speed: number };
   leaderboard: { name: string; score: number; me: boolean; level: number }[];
 }
 
@@ -236,7 +249,15 @@ interface Callbacks {
 }
 
 const xpNeed = (level: number) => Math.floor(45 * Math.pow(level, 1.35));
-const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : b < a ? a : v);
+const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
+
+function buzz(ms: number | number[]) {
+  try {
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate(ms);
+  } catch {
+    /* без вибро */
+  }
+}
 
 /* ============================== движок ============================== */
 
@@ -272,6 +293,8 @@ export class Engine {
   private particles: Particle[] = [];
   private texts: FloatText[] = [];
   private respawnAt: number[] = [];
+  private potions: Potion[] = [];
+  private potionT = 1.5;
 
   private keys = new Set<string>();
   private mouse = { x: 0, y: 0, on: false };
@@ -289,7 +312,6 @@ export class Engine {
   private mowSfxT = 0;
   private hudT = 0;
   private pruneT = 0;
-  private zoneT = 0;
   private curZone: BiomeId = "wheat";
   private emberT = 0;
 
@@ -312,6 +334,8 @@ export class Engine {
 
     this.player = this.makePlayer();
     for (let i = 0; i < 105; i++) this.bots.push(this.makeBot());
+    /* несколько зелий на поле с самого начала */
+    for (let i = 0; i < 4; i++) this.spawnPotion();
   }
 
   /* ---------- создание сущностей ---------- */
@@ -330,7 +354,10 @@ export class Engine {
       },
       bladeAngle: 0, bladeSpin: 1,
       hitCd: 0, hurtT: 0, shieldT: 2.5,
-      dead: false, tx: 0, ty: 0, retarget: 0, mode: "wander", levelCap: 999,
+      dead: false, tx: 0, ty: 0, retarget: 0,
+      tactic: "roam", strafe: 1, strafeT: 0, dashT: 0, dashCd: 0,
+      buffs: { power: 0, speed: 0 },
+      levelCap: 999,
     };
     this.recalcStats(e);
     e.hp = e.maxHp;
@@ -343,10 +370,10 @@ export class Engine {
     const x = clamp(WORLD / 2 + Math.cos(ang) * dist, 120, WORLD - 120);
     const y = clamp(WORLD / 2 + Math.sin(ang) * dist, 120, WORLD - 120);
     let level: number;
-    if (dist < 1200) level = 1 + Math.floor(Math.random() * 4);
-    else if (dist < 1700) level = 4 + Math.floor(Math.random() * 6);
-    else if (dist < 2150) level = 8 + Math.floor(Math.random() * 9);
-    else level = 14 + Math.floor(Math.random() * 12);
+    if (dist < 1200) level = 1 + Math.floor(Math.random() * 3);
+    else if (dist < 1700) level = 3 + Math.floor(Math.random() * 5);
+    else if (dist < 2150) level = 6 + Math.floor(Math.random() * 7);
+    else level = 10 + Math.floor(Math.random() * 16);
 
     const e: Ent = {
       id: this.nextId++,
@@ -360,14 +387,17 @@ export class Engine {
       bladeAngle: Math.random() * TAU, bladeSpin: Math.random() < 0.5 ? 1 : -1,
       hitCd: 0, hurtT: 0, shieldT: 1.5,
       dead: false, tx: x, ty: y, retarget: Math.random() * 1.5,
-      mode: "wander", levelCap: level + 6,
+      tactic: "roam", strafe: Math.random() < 0.5 ? -1 : 1, strafeT: Math.random() * 1.5,
+      dashT: 0, dashCd: 0,
+      buffs: { power: 0, speed: 0 },
+      levelCap: level + 6,
     };
     this.recalcStats(e);
     e.hp = e.maxHp * (0.75 + Math.random() * 0.25);
     if (this.player) {
       const dx = x - this.player.x, dy = y - this.player.y;
       if (dx * dx + dy * dy < 480 * 480) {
-        e.x = clamp(x + 620, 120, WORLD - 120);
+        e.x = clamp(x + 600, 120, WORLD - 120);
       }
     }
     return e;
@@ -386,7 +416,8 @@ export class Engine {
   private playerSpeed(): number {
     const u = this.cfg.upgrades;
     const sizeFactor = 1 - Math.min(this.player.level * 0.006, 0.22);
-    return 195 * sizeFactor * (1 + 0.06 * u.legs);
+    const buff = this.player.buffs.speed > 0 ? 1.5 : 1;
+    return 195 * sizeFactor * (1 + 0.06 * u.legs) * buff;
   }
 
   /* ---------- ввод ---------- */
@@ -601,6 +632,7 @@ export class Engine {
       e.hp = e.maxHp;
       if (e.isPlayer) {
         sfx.level();
+        buzz(30);
         this.addRing(e.x, e.y, "#ffd23f");
         this.addText(e.x, e.y - e.radius - 30, "УРОВЕНЬ " + e.level, "#ffd23f", 17);
         this.shake(4);
@@ -609,6 +641,44 @@ export class Engine {
         e.xp = 0;
         break;
       }
+    }
+  }
+
+  /* ---------- зелья ---------- */
+
+  private spawnPotion() {
+    if (this.potions.length >= 8) return;
+    const roll = Math.random();
+    const kind: PotionKind = roll < 0.3 ? "heal" : roll < 0.55 ? "power" : roll < 0.8 ? "speed" : "growth";
+    this.potions.push({
+      id: this.nextId++,
+      x: 240 + Math.random() * (WORLD - 480),
+      y: 240 + Math.random() * (WORLD - 480),
+      kind,
+      born: this.time,
+    });
+  }
+
+  private applyPotion(e: Ent, kind: PotionKind) {
+    const col = POTION_COLORS[kind];
+    this.addRing(e.x, e.y, col);
+    if (kind === "heal") {
+      e.hp = Math.min(e.maxHp, e.hp + e.maxHp * 0.45);
+      if (e.isPlayer) this.addText(e.x, e.y - e.radius - 26, "ЗДОРОВЬЕ +45%", col, 14);
+    } else if (kind === "growth") {
+      this.gainXp(e, xpNeed(e.level));
+      if (e.isPlayer) this.addText(e.x, e.y - e.radius - 26, "+1 УРОВЕНЬ!", col, 16);
+    } else if (kind === "power") {
+      e.buffs.power = 8;
+      if (e.isPlayer) this.addText(e.x, e.y - e.radius - 26, "СИЛА ×1.4 — 8с", col, 14);
+    } else {
+      e.buffs.speed = 8;
+      if (e.isPlayer) this.addText(e.x, e.y - e.radius - 26, "СКОРОСТЬ ×1.5 — 8с", col, 14);
+    }
+    for (let i = 0; i < 8; i++) this.spawnSparks(e.x + (Math.random() - 0.5) * 20, e.y - 6, col);
+    if (e.isPlayer) {
+      sfx.potion(kind);
+      buzz(20);
     }
   }
 
@@ -623,7 +693,7 @@ export class Engine {
     if (d2 > rr * rr) return;
     a.hitCd = 0.45;
     const d = Math.sqrt(d2) || 1;
-    const dmg = a.dmg * (0.85 + Math.random() * 0.3);
+    const dmg = a.dmg * (a.buffs.power > 0 ? 1.4 : 1) * (0.85 + Math.random() * 0.3);
     b.hp -= dmg;
     b.hurtT = 0.35;
     b.vx += (dx / d) * 300;
@@ -633,6 +703,7 @@ export class Engine {
     this.spawnSparks(mx, my, b.isPlayer ? "#ff7059" : "#eef9e2");
     if (b.isPlayer) {
       sfx.hurt();
+      buzz(45);
       this.shake(8);
     } else if (a.isPlayer) {
       sfx.thorn();
@@ -648,12 +719,14 @@ export class Engine {
     if (killer.isPlayer) {
       this.kills++;
       sfx.kill();
+      buzz(25);
       this.shake(12);
       this.addText(victim.x, victim.y - 34, "СКОШЕН!", "#ffd23f", 15);
     }
     if (victim.isPlayer) {
       this.killer = killer.name;
       sfx.death();
+      buzz([80, 40, 120]);
       this.shake(22);
       this.dyingT = 1.1;
       this.timeScale = 0.4;
@@ -677,7 +750,7 @@ export class Engine {
   }
 
   private spawnSparks(x: number, y: number, color: string) {
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
       const a = Math.random() * TAU;
       const s = 90 + Math.random() * 160;
       this.particles.push({
@@ -692,7 +765,7 @@ export class Engine {
   private spawnOrb(x: number, y: number) {
     this.particles.push({
       kind: "orb", x, y, vx: 0, vy: 0,
-      life: 1.4, max: 1.4, size: 3, color: "#ffe38a", rot: 0, vr: 0,
+      life: 1.4, max: 1.4, size: 3, color: "#b3f877", rot: 0, vr: 0,
     });
   }
 
@@ -776,6 +849,8 @@ export class Engine {
     p.hitCd = Math.max(0, p.hitCd - dt);
     p.hurtT = Math.max(0, p.hurtT - dt);
     p.shieldT = Math.max(0, p.shieldT - dt);
+    p.buffs.power = Math.max(0, p.buffs.power - dt);
+    p.buffs.speed = Math.max(0, p.buffs.speed - dt);
 
     /* --- регенерация и опасности --- */
     p.hp = Math.min(p.maxHp, p.hp + (1.1 + 0.9 * this.cfg.upgrades.regen + p.level * 0.06) * dt);
@@ -805,12 +880,12 @@ export class Engine {
     this.mowSfxT -= dt;
     this.xpAccT -= dt;
     if (this.xpAccT <= 0 && this.xpAcc > 0) {
-      this.addText(p.x, p.y - p.radius - 26, "+" + this.xpAcc, "#ffe38a", 13);
+      this.addText(p.x, p.y - p.radius - 26, "+" + this.xpAcc, "#b3f877", 13);
       this.xpAcc = 0;
       this.xpAccT = 0.3;
     }
 
-    /* --- боты --- */
+    /* --- боты с тактикой --- */
     this.updateBots(dt);
 
     /* --- бой попарно --- */
@@ -821,7 +896,6 @@ export class Engine {
       for (let j = i + 1; j < ents.length; j++) {
         const b = ents[j];
         if (b.dead) continue;
-        /* расталкивание тел */
         const dx = b.x - a.x, dy = b.y - a.y;
         const rr = a.radius + b.radius;
         const d2 = dx * dx + dy * dy;
@@ -833,6 +907,30 @@ export class Engine {
         }
         this.tryHit(a, b);
         this.tryHit(b, a);
+      }
+    }
+
+    /* --- зелья: появление и подбор --- */
+    this.potionT -= dt;
+    if (this.potionT <= 0) {
+      this.potionT = 3.5 + Math.random() * 2.5;
+      this.spawnPotion();
+    }
+    for (let i = this.potions.length - 1; i >= 0; i--) {
+      const pt = this.potions[i];
+      if (this.time - pt.born > 26) {
+        this.potions.splice(i, 1);
+        continue;
+      }
+      for (const e of ents) {
+        if (e.dead) continue;
+        const dx = e.x - pt.x, dy = e.y - pt.y;
+        const rr = e.radius + 15;
+        if (dx * dx + dy * dy < rr * rr) {
+          this.applyPotion(e, pt.kind);
+          this.potions.splice(i, 1);
+          break;
+        }
       }
     }
 
@@ -871,7 +969,7 @@ export class Engine {
       }
     }
 
-    /* --- отрастание пшеницы --- */
+    /* --- отрастание --- */
     for (const c of this.viewChunks) {
       for (const b of c.blades) if (b.cut > 0) b.cut -= dt;
     }
@@ -897,11 +995,14 @@ export class Engine {
     p.hp = 0;
     p.dead = true;
     sfx.death();
+    buzz([80, 40, 120]);
     this.shake(22);
     this.dyingT = 1.1;
     this.timeScale = 0.4;
     for (let i = 0; i < 16; i++) this.spawnShred(p.x, p.y, p.skin.body, 1.6);
   }
+
+  /* ---------- тактический ИИ ботов ---------- */
 
   private updateBots(dt: number) {
     const all: Ent[] = [this.player, ...this.bots];
@@ -910,47 +1011,145 @@ export class Engine {
       b.hitCd = Math.max(0, b.hitCd - dt);
       b.hurtT = Math.max(0, b.hurtT - dt);
       b.shieldT = Math.max(0, b.shieldT - dt);
+      b.dashT = Math.max(0, b.dashT - dt);
+      b.dashCd = Math.max(0, b.dashCd - dt);
+      b.buffs.power = Math.max(0, b.buffs.power - dt);
+      b.buffs.speed = Math.max(0, b.buffs.speed - dt);
       b.bladeAngle += b.bladeSpin * (4.5 + b.level * 0.1) * dt;
       b.hp = Math.min(b.maxHp, b.hp + 0.8 * dt);
+      b.strafeT -= dt;
+      if (b.strafeT <= 0) {
+        b.strafe = Math.random() < 0.5 ? -1 : 1;
+        b.strafeT = 1.2 + Math.random() * 1.4;
+      }
 
-      /* --- ИИ: выбор цели --- */
-      b.retarget -= dt;
+      /* --- оценка обстановки --- */
+      const bPow = b.dmg * (b.buffs.power > 0 ? 1.4 : 1);
       let threat: Ent | null = null;
       let threatD = 340 * 340;
       let prey: Ent | null = null;
-      let preyD = 430 * 430;
+      let preyScore = Infinity;
+      let nearest: Ent | null = null;
+      let nearestD = Infinity;
       for (const o of all) {
         if (o === b || o.dead) continue;
         const dx = o.x - b.x, dy = o.y - b.y;
         const d2 = dx * dx + dy * dy;
-        if (o.dmg > b.dmg * 1.12 && d2 < threatD) { threat = o; threatD = d2; }
-        else if (b.dmg > o.dmg * 1.25 && d2 < preyD) { prey = o; preyD = d2; }
-      }
-      if (threat && threatD < 300 * 300) {
-        b.mode = "flee";
-        const d = Math.sqrt(threatD) || 1;
-        b.tx = b.x - ((threat.x - b.x) / d) * 500;
-        b.ty = b.y - ((threat.y - b.y) / d) * 500;
-      } else if (prey && b.hp > b.maxHp * 0.3) {
-        b.mode = "chase";
-        b.tx = prey.x;
-        b.ty = prey.y;
-      } else {
-        b.mode = "wander";
-        if (b.retarget <= 0) {
-          b.retarget = 2 + Math.random() * 2.5;
-          b.tx = clamp(b.x + (Math.random() - 0.5) * 900, 120, WORLD - 120);
-          b.ty = clamp(b.y + (Math.random() - 0.5) * 900, 120, WORLD - 120);
+        if (d2 < nearestD) { nearest = o; nearestD = d2; }
+        const oPow = o.dmg * (o.buffs.power > 0 ? 1.4 : 1);
+        if (oPow > bPow * 1.08 && d2 < threatD) { threat = o; threatD = d2; }
+        if (oPow < bPow * 1.15) {
+          let score = d2;
+          if (o.hp < o.maxHp * 0.55) score *= 0.45; /* добивай раненых */
+          if (o.hurtT > 0.1) score *= 0.6;          /* помогай добивать — шакаль */
+          if (o.isPlayer) score *= 0.78;            /* игрок — главная цель */
+          if (score < preyScore) { prey = o; preyScore = score; }
         }
       }
 
-      const dx = b.tx - b.x, dy = b.ty - b.y;
-      const d = Math.hypot(dx, dy);
-      if (d > 12) {
-        const spd = b.speed * (b.mode === "flee" ? 1.2 : b.mode === "chase" ? 1.08 : 0.8) * BIOMES[biomeAt(b.x, b.y)].slow;
-        b.vx += ((dx / d) * spd - b.vx) * Math.min(1, dt * 5);
-        b.vy += ((dy / d) * spd - b.vy) * Math.min(1, dt * 5);
-        b.dir = Math.atan2(dy, dx);
+      /* --- ближайшее зелье --- */
+      let pot: Potion | null = null;
+      let potD = 700 * 700;
+      for (const pt of this.potions) {
+        const dx = pt.x - b.x, dy = pt.y - b.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < potD) { pot = pt; potD = d2; }
+      }
+      const hpFrac = b.hp / b.maxHp;
+      const wantsPot =
+        pot &&
+        ((pot.kind === "heal" && hpFrac < 0.72) ||
+          pot.kind === "growth" ||
+          (pot.kind === "power" && prey !== null && hpFrac > 0.45) ||
+          (pot.kind === "speed" && threat !== null));
+
+      /* --- выбор тактики --- */
+      let mx = 0, my = 0;
+      let spdMul = 0.8;
+
+      if (threat && threatD < 330 * 330) {
+        /* БЕГСТВО: от сильного, с рывком в упор */
+        b.tactic = "flee";
+        const d = Math.sqrt(threatD) || 1;
+        b.tx = b.x - ((threat.x - b.x) / d) * 520;
+        b.ty = b.y - ((threat.y - b.y) / d) * 520;
+        if (threatD < 170 * 170 && b.dashCd <= 0) {
+          b.dashT = 0.4;
+          b.dashCd = 3;
+        }
+        const dx = b.tx - b.x, dy = b.ty - b.y;
+        const d2 = Math.hypot(dx, dy) || 1;
+        mx = dx / d2; my = dy / d2;
+        spdMul = 1.28 * (b.dashT > 0 ? 1.85 : 1);
+      } else if (wantsPot && pot) {
+        /* МАРОДЁР: за зельем */
+        b.tactic = "loot";
+        const dx = pot.x - b.x, dy = pot.y - b.y;
+        const d = Math.hypot(dx, dy) || 1;
+        mx = dx / d; my = dy / d;
+        spdMul = 1.12;
+      } else if (prey && preyScore < 430 * 430 && hpFrac > 0.33) {
+        /* ОХОТА: сближение + стрейф по дуге, у цели — кружение */
+        b.tactic = "hunt";
+        const dx = prey.x - b.x, dy = prey.y - b.y;
+        const d = Math.hypot(dx, dy) || 1;
+        const close = d < b.bladeR + prey.radius + 30;
+        let ax = dx / d, ay = dy / d;
+        const px = -ay * b.strafe, py = ax * b.strafe;
+        if (close) {
+          ax = px * 1.15 + ax * 0.25;
+          ay = py * 1.15 + ay * 0.25;
+        } else {
+          ax = ax + px * 0.5;
+          ay = ay + py * 0.5;
+        }
+        const al = Math.hypot(ax, ay) || 1;
+        mx = ax / al; my = ay / al;
+        spdMul = close ? 1.18 : 1.06;
+      } else if (hpFrac < 0.45) {
+        /* ЛЕЧЕНИЕ: подальше от всех, к центру, переждать */
+        b.tactic = "heal";
+        let ax = (WORLD / 2 - b.x) * 0.35;
+        let ay = (WORLD / 2 - b.y) * 0.35;
+        if (nearest && nearestD < 520 * 520) {
+          const d = Math.sqrt(nearestD) || 1;
+          ax += ((b.x - nearest.x) / d) * 420;
+          ay += ((b.y - nearest.y) / d) * 420;
+        }
+        const al = Math.hypot(ax, ay) || 1;
+        mx = ax / al; my = ay / al;
+        spdMul = 0.95;
+      } else {
+        /* БЛУЖДАНИЕ: слабые тянутся к центру, сильные — на окраины */
+        b.tactic = "roam";
+        b.retarget -= dt;
+        if (b.retarget <= 0) {
+          b.retarget = 2 + Math.random() * 2.5;
+          const bias = b.level < 6 ? 0.35 : -0.15;
+          b.tx = clamp(
+            b.x + (Math.random() - 0.5) * 900 + (WORLD / 2 - b.x) * bias,
+            120, WORLD - 120
+          );
+          b.ty = clamp(
+            b.y + (Math.random() - 0.5) * 900 + (WORLD / 2 - b.y) * bias,
+            120, WORLD - 120
+          );
+        }
+        const dx = b.tx - b.x, dy = b.ty - b.y;
+        const d = Math.hypot(dx, dy);
+        if (d > 12) {
+          mx = dx / d; my = dy / d;
+          spdMul = 0.8;
+        } else {
+          mx = 0; my = 0;
+        }
+      }
+
+      if (mx !== 0 || my !== 0) {
+        const spd = b.speed * spdMul * (b.buffs.speed > 0 ? 1.5 : 1) * BIOMES[biomeAt(b.x, b.y)].slow;
+        b.vx += (mx * spd - b.vx) * Math.min(1, dt * 5);
+        b.vy += (my * spd - b.vy) * Math.min(1, dt * 5);
+        b.dir = Math.atan2(my, mx);
       } else {
         b.vx *= 0.9; b.vy *= 0.9;
       }
@@ -1029,6 +1228,10 @@ export class Engine {
       zone: BIOMES[this.curZone].name,
       danger: biomeAt(p.x, p.y) === "magma" && p.level < 12,
       players: this.bots.length + 1,
+      buffs: {
+        power: Math.max(0, Math.round(p.buffs.power * 10) / 10),
+        speed: Math.max(0, Math.round(p.buffs.speed * 10) / 10),
+      },
       leaderboard: sorted.map((e) => ({ name: e.name, score: Math.round(e.score), me: e.isPlayer, level: e.level })),
     });
   }
@@ -1071,7 +1274,7 @@ export class Engine {
     }
 
     /* граница мира */
-    ctx.strokeStyle = "#4a2f12";
+    ctx.strokeStyle = "#5c3a1e";
     ctx.lineWidth = 10;
     ctx.strokeRect(0, 0, WORLD, WORLD);
 
@@ -1103,7 +1306,7 @@ export class Engine {
             ctx.arc(fx + Math.cos(a) * 2.6, fy + Math.sin(a) * 2.6, 2.1, 0, TAU);
             ctx.fill();
           }
-          ctx.fillStyle = "#2a1608";
+          ctx.fillStyle = "#ffd23f";
           ctx.beginPath();
           ctx.arc(fx, fy, 1.7, 0, TAU);
           ctx.fill();
@@ -1114,9 +1317,13 @@ export class Engine {
 
     /* кактусы */
     for (const c of this.viewChunks) {
-      for (const cac of c.cacti) {
-        this.drawCactus(cac);
-      }
+      for (const cac of c.cacti) this.drawCactus(cac);
+    }
+
+    /* зелья */
+    for (const pt of this.potions) {
+      if (pt.x < viewX0 || pt.x > viewX1 || pt.y < viewY0 || pt.y > viewY1) continue;
+      this.drawPotion(pt);
     }
 
     /* сущности (сортировка по y, рисуем только видимых — ботов на карте 100+) */
@@ -1162,7 +1369,7 @@ export class Engine {
       ctx.globalAlpha = clamp(ft.life, 0, 1);
       ctx.font = `${ft.size * invZ}px "Russo One", sans-serif`;
       ctx.lineWidth = 4 * invZ;
-      ctx.strokeStyle = "rgba(20,12,4,0.85)";
+      ctx.strokeStyle = "rgba(7,17,8,0.85)";
       ctx.strokeText(ft.text, ft.x, ft.y);
       ctx.fillStyle = ft.color;
       ctx.fillText(ft.text, ft.x, ft.y);
@@ -1176,8 +1383,8 @@ export class Engine {
       this.vw / 2, this.vh / 2, Math.min(this.vw, this.vh) * 0.36,
       this.vw / 2, this.vh / 2, Math.max(this.vw, this.vh) * 0.72
     );
-    vg.addColorStop(0, "rgba(10,6,2,0)");
-    vg.addColorStop(1, "rgba(10,6,2,0.42)");
+    vg.addColorStop(0, "rgba(4,10,5,0)");
+    vg.addColorStop(1, "rgba(4,10,5,0.42)");
     ctx.fillStyle = vg;
     ctx.fillRect(0, 0, this.vw, this.vh);
 
@@ -1194,6 +1401,62 @@ export class Engine {
       ctx.fillStyle = rg;
       ctx.fillRect(0, 0, this.vw, this.vh);
     }
+  }
+
+  private drawPotion(pt: Potion) {
+    const ctx = this.ctx;
+    const col = POTION_COLORS[pt.kind];
+    const age = this.time - pt.born;
+    const blink = age > 21 ? 0.35 + 0.65 * Math.abs(Math.sin(this.animT * 6)) : 1;
+    const fy = pt.y + Math.sin(this.animT * 3 + pt.id) * 3;
+
+    ctx.save();
+    ctx.translate(pt.x, fy);
+    ctx.globalAlpha = blink;
+
+    /* свечение */
+    ctx.globalAlpha = 0.2 * blink;
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.arc(0, 2, 17, 0, TAU);
+    ctx.fill();
+    ctx.globalAlpha = blink;
+
+    /* тень */
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.beginPath();
+    ctx.ellipse(0, 12, 8, 3, 0, 0, TAU);
+    ctx.fill();
+
+    /* колба: круглое дно + горлышко */
+    ctx.fillStyle = col;
+    ctx.strokeStyle = "rgba(20,12,4,0.85)";
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.arc(0, 3, 7.5, 0, TAU);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = col;
+    ctx.fillRect(-3, -12, 6, 11);
+    ctx.strokeRect(-3, -12, 6, 11);
+    /* пробка */
+    ctx.fillStyle = "#8a5a2a";
+    ctx.fillRect(-4, -16, 8, 5);
+    ctx.strokeRect(-4, -16, 8, 5);
+    /* блик */
+    ctx.strokeStyle = "rgba(255,255,255,0.65)";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.arc(-2.4, 1.4, 4, Math.PI * 0.8, Math.PI * 1.4);
+    ctx.stroke();
+    /* пузырёк */
+    const bub = Math.sin(this.animT * 5 + pt.id * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.beginPath();
+    ctx.arc(1.6, 3.5 + bub * 1.6, 1.5, 0, TAU);
+    ctx.fill();
+
+    ctx.restore();
   }
 
   private drawCactus(cac: Cactus) {
@@ -1228,7 +1491,6 @@ export class Engine {
       ctx.lineWidth = 2;
       ctx.strokeStyle = "#245c1e";
     }
-    /* колючки */
     ctx.strokeStyle = "#e8f6da";
     ctx.lineWidth = 1;
     for (let k = 0; k < 5; k++) {
@@ -1253,6 +1515,20 @@ export class Engine {
     ctx.ellipse(e.x, e.y + e.radius * 0.55, e.radius * 1.05, e.radius * 0.42, 0, 0, TAU);
     ctx.fill();
 
+    /* аура зелья */
+    if (e.buffs.power > 0 || e.buffs.speed > 0) {
+      const col = e.buffs.power > 0 ? "#ff5340" : "#59dcff";
+      ctx.save();
+      ctx.globalAlpha = 0.5 + 0.3 * Math.sin(this.animT * 6);
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([5, 6]);
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.radius + 10, this.animT * 3, this.animT * 3 + TAU);
+      ctx.stroke();
+      ctx.restore();
+    }
+
     ctx.save();
     if (blink) ctx.globalAlpha = 0.55;
 
@@ -1269,7 +1545,6 @@ export class Engine {
       ctx.moveTo(ex, ey);
       ctx.lineTo(tx, ty);
       ctx.stroke();
-      /* лезвие-полумесяц */
       ctx.beginPath();
       ctx.arc(tx, ty, e.radius * 0.72 + 5, ang - 1.9, ang + 1.2);
       ctx.arc(tx, ty, (e.radius * 0.72 + 5) * 0.42, ang + 1.2, ang - 1.9, true);
@@ -1289,7 +1564,6 @@ export class Engine {
     ctx.lineWidth = 3;
     ctx.strokeStyle = e.skin.rim;
     ctx.stroke();
-    /* блик */
     ctx.beginPath();
     ctx.arc(e.x - e.radius * 0.3, e.y - e.radius * 0.35, e.radius * 0.55, Math.PI * 0.9, Math.PI * 1.6);
     ctx.strokeStyle = "rgba(255,255,255,0.28)";
@@ -1325,7 +1599,7 @@ export class Engine {
     /* щит */
     if (e.shieldT > 0) {
       ctx.setLineDash([6, 6]);
-      ctx.strokeStyle = "rgba(255,227,138,0.8)";
+      ctx.strokeStyle = "rgba(179,248,119,0.8)";
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(e.x, e.y, e.radius + 7, this.animT * 2, this.animT * 2 + TAU);
@@ -1340,22 +1614,28 @@ export class Engine {
     if (e.hp < e.maxHp) {
       const w = e.radius * 2.4;
       const pct = clamp(e.hp / e.maxHp, 0, 1);
-      ctx.fillStyle = "rgba(20,12,4,0.7)";
+      ctx.fillStyle = "rgba(7,17,8,0.7)";
       ctx.fillRect(e.x - w / 2, e.y - e.radius - 14 * invZ, w, 4.5 * invZ);
       ctx.fillStyle = pct > 0.5 ? "#8def4a" : pct > 0.25 ? "#ffd23f" : "#ff5340";
       ctx.fillRect(e.x - w / 2, e.y - e.radius - 14 * invZ, w * pct, 4.5 * invZ);
     }
 
-    /* имя бота */
+    /* имя бота + точка тактики */
     if (!e.isPlayer) {
       ctx.font = `600 ${12.5 * invZ}px Rubik, sans-serif`;
       ctx.textAlign = "center";
-      ctx.lineWidth = 3.5 * invZ;
-      ctx.strokeStyle = "rgba(20,12,4,0.8)";
       const label = `${e.name} · ур.${e.level}`;
-      ctx.strokeText(label, e.x, e.y - e.radius - 19 * invZ);
-      ctx.fillStyle = e.dmg > this.player.dmg * 1.15 ? "#ff8d7d" : "#ffe9c4";
-      ctx.fillText(label, e.x, e.y - e.radius - 19 * invZ);
+      const w = ctx.measureText(label).width;
+      const ny = e.y - e.radius - 19 * invZ;
+      ctx.lineWidth = 3.5 * invZ;
+      ctx.strokeStyle = "rgba(7,17,8,0.8)";
+      ctx.strokeText(label, e.x, ny);
+      ctx.fillStyle = e.dmg > this.player.dmg * 1.15 ? "#ff8d7d" : "#d6ffb0";
+      ctx.fillText(label, e.x, ny);
+      ctx.fillStyle = TACTIC_COLORS[e.tactic];
+      ctx.beginPath();
+      ctx.arc(e.x - w / 2 - 7 * invZ, ny - 3.5 * invZ, 2.8 * invZ, 0, TAU);
+      ctx.fill();
     }
   }
 
@@ -1364,7 +1644,7 @@ export class Engine {
   private buildMinimapBase() {
     const c = this.mapCanvas.getContext("2d")!;
     const s = 156 / WORLD;
-    c.fillStyle = "#241708";
+    c.fillStyle = "#0d2110";
     c.fillRect(0, 0, 156, 156);
     for (const z of ZONES) {
       c.fillStyle = BIOMES[z.biome].ground;
@@ -1378,7 +1658,7 @@ export class Engine {
       }
     }
     c.globalAlpha = 1;
-    c.strokeStyle = "#6b4a1f";
+    c.strokeStyle = "#2a5a30";
     c.lineWidth = 2;
     c.strokeRect(1, 1, 154, 154);
   }
@@ -1389,11 +1669,17 @@ export class Engine {
     const s = target.width / WORLD;
     c.clearRect(0, 0, target.width, target.height);
     c.drawImage(this.mapCanvas, 0, 0, target.width, target.height);
+    for (const pt of this.potions) {
+      c.fillStyle = POTION_COLORS[pt.kind];
+      c.beginPath();
+      c.arc(pt.x * s, pt.y * s, 2.4, 0, TAU);
+      c.fill();
+    }
     for (const b of this.bots) {
       c.fillStyle =
         b.level > this.player.level + 1 ? "#ff5340" : b.level < this.player.level - 1 ? "#8def4a" : "#ffd23f";
       c.beginPath();
-      c.arc(b.x * s, b.y * s, 2.5, 0, TAU);
+      c.arc(b.x * s, b.y * s, 3, 0, TAU);
       c.fill();
     }
     const p = this.player;

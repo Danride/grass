@@ -103,6 +103,24 @@ class Sfx {
     this.tone(300, 0.5, "sawtooth", 0.16, 50);
     this.noise(0.4, 0.2, 300, 0.6, 0.05);
   }
+
+  potion(kind: "power" | "speed" | "heal" | "growth") {
+    if (kind === "heal") {
+      this.tone(480, 0.1, "sine", 0.14);
+      this.tone(700, 0.16, "sine", 0.14, undefined, 0.08);
+    } else if (kind === "power") {
+      this.tone(280, 0.09, "square", 0.11);
+      this.tone(560, 0.16, "square", 0.11, undefined, 0.07);
+    } else if (kind === "speed") {
+      this.tone(700, 0.07, "triangle", 0.13);
+      this.tone(1180, 0.14, "triangle", 0.13, undefined, 0.06);
+    } else {
+      this.tone(500, 0.1, "triangle", 0.13);
+      this.tone(650, 0.1, "triangle", 0.13, undefined, 0.08);
+      this.tone(800, 0.18, "triangle", 0.14, undefined, 0.16);
+    }
+    this.noise(0.12, 0.06, 1800, 2, 0.02);
+  }
 }
 
 export const sfx = new Sfx();
