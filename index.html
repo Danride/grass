@@ -1,97 +1,166 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>coder-app-name</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#071108" />
+    <meta
+      name="description"
+      content="Косарь.io — коси пшеницу, качай косу и выживи среди сотни ботов на огромном поле."
+    />
+    <title>Косарь.io — выживи на пшеничном поле</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rubik:wght@400;500;700;800&display=swap&subset=cyrillic"
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
-      /* 内联样式确保主题色立即生效，避免闪烁 */
       html,
       body {
         margin: 0;
         padding: 0;
         width: 100%;
         height: 100%;
+        background: #071108;
+        overflow: hidden;
       }
-      html.light,
-      html.light body {
-        background-color: #ffffff !important;
-        color: #000000;
+      /* экран-подсказка, если игру открыли двойным кликом с диска */
+      #file-hint {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+        background:
+          radial-gradient(ellipse at 50% 120%, #274d1c 0%, rgba(39, 77, 28, 0) 55%),
+          linear-gradient(180deg, #0b1a0d 0%, #071108 70%);
+        color: #e8f5e0;
+        font-family: "Rubik", system-ui, sans-serif;
+        overflow: auto;
       }
-      html.dark,
-      html.dark body {
-        background-color: #1a1a1a !important;
-        color: #ffffff;
+      #file-hint .card {
+        max-width: 620px;
+        width: 100%;
+        background: linear-gradient(180deg, rgba(15, 34, 18, 0.97), rgba(9, 22, 11, 0.97));
+        border: 2px solid #2a5a30;
+        border-radius: 14px;
+        padding: 28px 28px 24px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+      }
+      #file-hint h1 {
+        font-family: "Russo One", "Rubik", sans-serif;
+        font-weight: 400;
+        font-size: 34px;
+        letter-spacing: 0.02em;
+        margin: 0 0 4px;
+        color: #ffd23f;
+        text-shadow: 0 3px 0 rgba(7, 17, 8, 0.9);
+      }
+      #file-hint h1 span {
+        color: #8def4a;
+      }
+      #file-hint .sub {
+        margin: 0 0 18px;
+        color: #b7d8a8;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      #file-hint ol {
+        margin: 0;
+        padding-left: 20px;
+        display: grid;
+        gap: 12px;
+        font-size: 14px;
+        line-height: 1.55;
+        color: #d6e8cc;
+      }
+      #file-hint b {
+        color: #ffd23f;
+      }
+      #file-hint code {
+        font-family: ui-monospace, "Consolas", monospace;
+        background: #122a15;
+        border: 1px solid #2a5a30;
+        border-radius: 6px;
+        padding: 1px 7px;
+        color: #b3f877;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      #file-hint .note {
+        margin-top: 18px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: rgba(255, 210, 63, 0.08);
+        border: 1.5px dashed rgba(255, 210, 63, 0.4);
+        font-size: 13px;
+        line-height: 1.5;
+        color: #ffe38a;
+      }
+      #file-hint .scythe {
+        display: block;
+        margin-bottom: 10px;
       }
     </style>
-    <script>
-      // 在 React 加载前立即设置主题，避免闪烁
-      (function () {
-        const isInIframe = window.self !== window.top;
-
-        function applyThemeToDOM(theme) {
-          document.documentElement.classList.remove("light", "dark");
-          document.documentElement.classList.add(theme);
-          document.documentElement.setAttribute("data-theme", theme);
-        }
-
-        if (isInIframe) {
-          // 监听父窗口主动推送的主题消息
-          window.addEventListener("message", function (event) {
-            if (event.data && typeof event.data.theme === "string") {
-              const theme = event.data.theme;
-              if (theme === "light" || theme === "dark") {
-                applyThemeToDOM(theme);
-              }
-            }
-          });
-        } else {
-          // 非 iframe 环境，使用默认 light 主题
-          applyThemeToDOM("light");
-        }
-      })();
-    </script>
-      <script>
-      (function () {
-        if (window.self === window.top) return;
-        var reported = {};
-        window.addEventListener("error", function (event) {
-          // 资源加载失败的 error 事件没有 message，此处仅上报 JS 运行时错误
-          if (!event || !event.message) return;
-          var key =
-            event.message + "|" + (event.filename || "") + "|" + (event.lineno || 0);
-          if (reported[key]) return; // 相同错误只上报一次，避免渲染循环刷屏
-          reported[key] = true;
-          try {
-            window.parent.postMessage(
-              {
-                type: "sandbox-runtime-error",
-                payload: {
-                  message: String(event.message).slice(0, 500),
-                  filename: event.filename || "",
-                  lineno: event.lineno || 0,
-                  colno: event.colno || 0,
-                  stack:
-                    event.error && event.error.stack
-                      ? String(event.error.stack).slice(0, 2000)
-                      : ""
-                }
-              },
-              "*"
-            );
-          } catch (e) {
-            /* 上报失败不影响页面运行 */
-          }
-        });
-      })();
-    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+
+    <div id="file-hint">
+      <div class="card">
+        <svg class="scythe" width="46" height="46" viewBox="0 0 48 48" fill="none">
+          <path
+            d="M40 6C22 8 9 20 6 38c10-2 16-6 20-12 3.5 1.5 8 1 10-2-4.5.5-8-.8-9.5-3C33 17 38 12 40 6Z"
+            fill="#8def4a" stroke="#35731a" stroke-width="2" stroke-linejoin="round"
+          />
+          <path d="M8 40 26 22" stroke="#d8b23f" stroke-width="4" stroke-linecap="round" />
+          <path d="M6 42l3-3" stroke="#8a5a00" stroke-width="4" stroke-linecap="round" />
+        </svg>
+        <h1>Косарь<span>.io</span></h1>
+        <p class="sub">
+          Это веб-игра, и её нельзя запустить двойным кликом по файлу — браузер запрещает
+          загружать модули игры прямо с диска. Игра цела и невредима, её просто нужно открыть
+          через сервер. Выбирайте самый удобный способ:
+        </p>
+        <ol>
+          <li>
+            <b>Проще всего:</b> играйте прямо в окне предпросмотра, из которого скачивали ZIP —
+            там игра уже запущена по ссылке.
+          </li>
+          <li>
+            <b>Готовая сборка:</b> в архиве найдите папку <code>dist</code> — внутри
+            <code>index.html</code> и папка <code>assets</code> (они работают только вместе).
+            Откройте терминал в папке <code>dist</code> и выполните
+            <code>npx serve</code> или <code>python -m http.server</code>, затем перейдите по
+            показанной ссылке вида <code>http://localhost:3000</code>.
+          </li>
+          <li>
+            <b>Из исходников:</b> установите <b>Node.js</b> с nodejs.org, затем в папке проекта
+            выполните <code>npm install</code> и <code>npm run dev</code> — игра откроется на
+            <code>http://localhost:3000</code>.
+          </li>
+        </ol>
+        <div class="note">
+          Если в архиве нет папки <code>dist</code>, соберите её командой
+          <code>npm run build</code> после <code>npm install</code>. Прогресс, скины и рекорды
+          сохраняются в браузере автоматически.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        if (location.protocol === "file:") {
+          document.getElementById("file-hint").style.display = "flex";
+        }
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
