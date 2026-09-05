@@ -60,23 +60,23 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
     <div className="relative min-h-dvh w-full overflow-hidden bg-[#140d05]">
       <WheatField />
 
-      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col items-center px-3 py-6 sm:py-10">
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col items-center px-2.5 py-5 sm:px-3 sm:py-10">
         {/* -------- шапка -------- */}
         <header className="flex w-full items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <IconScytheLogo size={40} />
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <IconScytheLogo size={34} className="sm:h-10 sm:w-10" />
             <div>
-              <h1 className="font-display text-3xl leading-none text-sun-400 drop-shadow-[0_4px_0_rgba(20,12,4,0.9)] sm:text-4xl">
+              <h1 className="font-display text-2xl leading-none text-sun-400 drop-shadow-[0_4px_0_rgba(20,12,4,0.9)] sm:text-4xl">
                 КОСАРЬ<span className="text-grass-400">.IO</span>
               </h1>
-              <p className="mt-1 text-[11px] font-bold uppercase tracking-[0.22em] text-[#d8c08a]">
+              <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.22em] text-[#d8c08a] sm:text-[11px]">
                 жатва на пшеничном поле
               </p>
             </div>
           </div>
-          <div className="hud-chip flex items-center gap-1.5 border-[#6b4a1f]/70 bg-[#1c1206]/85 px-3 py-1.5 text-sun-300">
-            <IconDew size={16} className="text-dew-400" />
-            <span className="font-display text-lg leading-none">{fmt(save.dew)}</span>
+          <div className="hud-chip flex items-center gap-1.5 border-[#6b4a1f]/70 bg-[#1c1206]/85 px-2.5 py-1 text-sun-300 sm:px-3 sm:py-1.5">
+            <IconDew size={14} className="text-dew-400 sm:h-4 sm:w-4" />
+            <span className="font-display text-base leading-none sm:text-lg">{fmt(save.dew)}</span>
           </div>
         </header>
 
@@ -93,7 +93,7 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
             <button
               key={t}
               onClick={() => switchTab(t)}
-              className={`tab-btn px-2 py-2.5 text-[11px] sm:text-sm ${tab === t ? "on" : "off"}`}
+              className={`tab-btn px-1.5 py-2 text-[10px] sm:px-2 sm:py-2.5 sm:text-sm ${tab === t ? "on" : "off"}`}
             >
               {label}
             </button>
@@ -103,8 +103,8 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
         {/* -------- контент -------- */}
         <main className="mt-4 w-full max-w-3xl">
           {tab === "start" && (
-            <section key="start" className="anim-pop panel-earth p-4 sm:p-6">
-              <label className="block font-display text-xs uppercase tracking-widest text-[#d8c08a]">
+            <section key="start" className="anim-pop panel-earth p-3 sm:p-6">
+              <label className="block font-display text-[10px] uppercase tracking-widest text-[#d8c08a] sm:text-xs">
                 Имя косаря
               </label>
               <input
@@ -112,16 +112,16 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                 onChange={(e) => setName(e.target.value.slice(0, 16))}
                 onKeyDown={(e) => e.key === "Enter" && start()}
                 placeholder="Косарь"
-                className="mt-1.5 w-full rounded-lg border-2 border-[#6b4a1f] bg-[#120c04] px-3 py-2.5 font-display text-lg text-[#ffe9c4] outline-none placeholder:text-[#6b5330] focus:border-sun-500"
+                className="mt-1.5 w-full rounded-lg border-2 border-[#6b4a1f] bg-[#120c04] px-2.5 py-2 font-display text-base text-[#ffe9c4] outline-none placeholder:text-[#6b5330] focus:border-sun-500 sm:px-3 sm:py-2.5 sm:text-lg"
               />
               <button
                 onClick={start}
-                className="btn-gold mt-4 flex w-full items-center justify-center gap-2.5 px-6 py-4 text-xl"
+                className="btn-gold mt-3 flex w-full items-center justify-center gap-2 px-5 py-3 text-base sm:mt-4 sm:px-6 sm:py-4 sm:text-xl"
               >
-                <IconGrass size={22} /> В поле!
+                <IconGrass size={18} className="sm:h-[22px] sm:w-[22px]" /> В поле!
               </button>
 
-              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <div className="mt-3 grid grid-cols-2 gap-1.5 sm:mt-4 sm:gap-2 sm:grid-cols-3">
                 <Record label="Рекорд очков" value={fmt(save.best.score)} icon={<IconTrophy size={15} className="text-sun-400" />} />
                 <Record label="Уровень" value={String(save.best.level)} icon={<IconBlade size={15} className="text-grass-400" />} />
                 <Record label="Ботов скошено" value={fmt(save.best.kills)} icon={<IconSkull size={15} className="text-blood-400" />} />
@@ -138,7 +138,7 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
           )}
 
           {tab === "skins" && (
-            <section key="skins" className="anim-pop panel-earth p-4 sm:p-6">
+            <section key="skins" className="anim-pop panel-earth p-3 sm:p-6">
               <SectionTitle title="Выбор скина" hint="от угля до снега · узоры — за росу" />
               <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                 {SKINS.map((s) => {
@@ -165,16 +165,16 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                         </span>
                       )}
                       <SkinPreview skin={s} />
-                      <div className="mt-2 font-display text-[13px] leading-tight text-[#ffe9c4]">{s.name}</div>
-                      <div className="mt-0.5 text-[11px] leading-tight text-[#c8ab74]">{s.desc}</div>
-                      <div className="mt-2">
+                      <div className="mt-1.5 font-display text-[12px] leading-tight text-[#ffe9c4] sm:mt-2 sm:text-[13px]">{s.name}</div>
+                      <div className="mt-0.5 text-[10px] leading-tight text-[#c8ab74] sm:text-[11px]">{s.desc}</div>
+                      <div className="mt-1.5 sm:mt-2">
                         {owned ? (
-                          <span className="font-display text-[11px] uppercase text-grass-400">
+                          <span className="font-display text-[10px] uppercase text-grass-400 sm:text-[11px]">
                             {active ? "в бою" : "надеть"}
                           </span>
                         ) : (
-                          <span className={`flex items-center gap-1 font-display text-[12px] ${affordable ? "text-dew-300" : "text-blood-400"}`}>
-                            <IconDew size={13} /> {fmt(s.cost)}
+                          <span className={`flex items-center gap-1 font-display text-[11px] sm:text-[12px] ${affordable ? "text-dew-300" : "text-blood-400"}`}>
+                            <IconDew size={12} className="sm:h-[13px] sm:w-[13px]" /> {fmt(s.cost)}
                           </span>
                         )}
                       </div>
@@ -186,9 +186,9 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
           )}
 
           {tab === "shop" && (
-            <section key="shop" className="anim-pop panel-earth p-4 sm:p-6">
+            <section key="shop" className="anim-pop panel-earth p-3 sm:p-6">
               <SectionTitle title="Кузница косаря" hint="улучшения сохраняются навсегда" />
-              <div className="mt-3 space-y-2">
+              <div className="mt-2.5 space-y-1.5 sm:mt-3 sm:space-y-2">
                 {UPGRADES.map((u) => {
                   const lvl = save.upgrades[u.id];
                   const maxed = lvl >= u.max;
@@ -197,24 +197,24 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                   return (
                     <div
                       key={u.id}
-                      className="flex items-center gap-3 rounded-xl border-2 border-[#6b4a1f] bg-[#241708] p-2.5 sm:p-3"
+                      className="flex items-center gap-2 rounded-xl border-2 border-[#6b4a1f] bg-[#241708] p-2 sm:gap-3 sm:p-3"
                     >
-                      <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg border ${maxed ? "border-sun-500 bg-[#33220b] text-sun-400" : "border-[#6b4a1f] bg-[#160f06] text-grass-400"}`}>
+                      <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg border sm:h-10 sm:w-10 ${maxed ? "border-sun-500 bg-[#33220b] text-sun-400" : "border-[#6b4a1f] bg-[#160f06] text-grass-400"}`}>
                         <UpgradeIcon id={u.id} />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-display text-sm text-[#ffe9c4]">{u.name}</span>
-                          <span className="font-display text-[10px] uppercase text-[#c8ab74]">
+                          <span className="font-display text-[13px] text-[#ffe9c4] sm:text-sm">{u.name}</span>
+                          <span className="font-display text-[9px] uppercase text-[#c8ab74] sm:text-[10px]">
                             ур. {lvl}/{u.max}
                           </span>
                         </div>
-                        <div className="text-[11px] text-[#c8ab74]">{u.desc}</div>
+                        <div className="text-[10px] text-[#c8ab74] sm:text-[11px]">{u.desc}</div>
                         <div className="mt-1 flex gap-1">
                           {Array.from({ length: u.max }).map((_, i) => (
                             <span
                               key={i}
-                              className={`h-1.5 flex-1 rounded-full ${i < lvl ? "bg-gradient-to-r from-sun-600 to-sun-400" : "bg-[#3a2812]"}`}
+                              className={`h-1 flex-1 rounded-full sm:h-1.5 ${i < lvl ? "bg-gradient-to-r from-sun-600 to-sun-400" : "bg-[#3a2812]"}`}
                             />
                           ))}
                         </div>
@@ -222,7 +222,7 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                       <button
                         onClick={() => buyUpgrade(u.id)}
                         disabled={maxed || !affordable}
-                        className={`shrink-0 rounded-lg border-2 px-3 py-2 font-display text-sm uppercase tracking-wide transition ${
+                        className={`shrink-0 rounded-lg border-2 px-2 py-1.5 font-display text-[12px] uppercase tracking-wide transition sm:px-3 sm:py-2 sm:text-sm ${
                           maxed
                             ? "cursor-default border-[#6b4a1f] bg-[#241708] text-[#c8ab74]"
                             : affordable
@@ -234,7 +234,7 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                           "Макс"
                         ) : (
                           <span className="flex items-center gap-1">
-                            <IconDew size={14} /> {fmt(cost)}
+                            <IconDew size={12} className="sm:h-[14px] sm:w-[14px]" /> {fmt(cost)}
                           </span>
                         )}
                       </button>
@@ -246,9 +246,9 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
           )}
 
           {tab === "help" && (
-            <section key="help" className="anim-pop panel-earth p-4 sm:p-6">
+            <section key="help" className="anim-pop panel-earth p-3 sm:p-6">
               <SectionTitle title="Подсказки косарю" hint="прочитал — уже сильнее половины поля" />
-              <div className="mt-3 grid gap-2.5 md:grid-cols-2">
+              <div className="help-shrink mt-2.5 grid gap-2 sm:mt-3 sm:gap-2.5 md:grid-cols-2">
                 <HelpCard title="Управление — компьютер">
                   <HelpRow k="Мышь" v="двигаться к курсору" />
                   <HelpRow k="W A S D" v="двигаться (работает и ЦФЫВ)" />
@@ -341,7 +341,7 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
           )}
         </main>
 
-        <footer className="mt-4 pb-2 text-center text-[11px] text-[#8a6f42]">
+        <footer className="mt-3 pb-2 text-center text-[10px] text-[#8a6f42] sm:mt-4 sm:text-[11px]">
           Сделано для жатвы · рекорды хранятся в этом браузере
         </footer>
       </div>
@@ -373,22 +373,22 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
 
 function SectionTitle({ title, hint }: { title: string; hint: string }) {
   return (
-    <div className="flex flex-wrap items-baseline justify-between gap-2">
-      <h2 className="font-display text-xl uppercase tracking-wide text-sun-400 drop-shadow-[0_3px_0_rgba(20,12,4,0.9)] sm:text-2xl">
+    <div className="flex flex-wrap items-baseline justify-between gap-1.5 sm:gap-2">
+      <h2 className="font-display text-base uppercase tracking-wide text-sun-400 drop-shadow-[0_3px_0_rgba(20,12,4,0.9)] sm:text-2xl">
         {title}
       </h2>
-      <span className="text-[11px] font-bold uppercase tracking-wider text-[#8a6f42]">{hint}</span>
+      <span className="text-[9px] font-bold uppercase tracking-wider text-[#8a6f42] sm:text-[11px]">{hint}</span>
     </div>
   );
 }
 
 function Record({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-lg border border-[#4a3315] bg-[#160f06] px-2.5 py-2">
+    <div className="flex items-center gap-2 rounded-lg border border-[#4a3315] bg-[#160f06] px-2 py-1.5 sm:gap-2.5 sm:px-2.5 sm:py-2">
       {icon}
       <div className="min-w-0">
-        <div className="truncate text-[10px] font-bold uppercase tracking-wider text-[#8a6f42]">{label}</div>
-        <div className="font-display text-base leading-tight text-[#ffe9c4]">{value}</div>
+        <div className="truncate text-[8px] font-bold uppercase tracking-wider text-[#8a6f42] sm:text-[10px]">{label}</div>
+        <div className="font-display text-sm leading-tight text-[#ffe9c4] sm:text-base">{value}</div>
       </div>
     </div>
   );
@@ -396,16 +396,16 @@ function Record({ label, value, icon }: { label: string; value: string; icon: Re
 
 function HelpCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="rounded-xl border-2 border-[#6b4a1f] bg-[#241708] p-3">
-      <div className="font-display text-xs uppercase tracking-widest text-[#d8c08a]">{title}</div>
-      <ul className="mt-2 space-y-2">{children}</ul>
+    <div className="rounded-xl border-2 border-[#6b4a1f] bg-[#241708] p-2.5 sm:p-3">
+      <div className="font-display text-[10px] uppercase tracking-widest text-[#d8c08a] sm:text-xs">{title}</div>
+      <ul className="mt-1.5 space-y-1.5 sm:mt-2 sm:space-y-2">{children}</ul>
     </div>
   );
 }
 
 function HelpRow({ k, v }: { k: string; v: string }) {
   return (
-    <li className="flex items-center gap-2 text-[13px] text-[#e8d9b8]">
+    <li className="flex items-center gap-2 text-[12px] text-[#e8d9b8] sm:text-[13px]">
       <span className="kbd shrink-0">{k}</span>
       <span className="leading-snug">{v}</span>
     </li>
@@ -414,7 +414,7 @@ function HelpRow({ k, v }: { k: string; v: string }) {
 
 function ZoneRow({ color, name, note }: { color: string; name: string; note: string }) {
   return (
-    <div className="flex items-start gap-2">
+    <div className="zone-note flex items-start gap-2">
       <span className="mt-1 h-3 w-3 shrink-0 rounded-sm border border-black/40" style={{ background: color }} />
       <span>
         <b className="text-[#ffe9c4]">{name}</b>

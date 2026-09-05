@@ -199,21 +199,21 @@ function PauseOverlay({
 }) {
   return (
     <div className="absolute inset-0 z-30 flex items-center justify-center bg-pit-950/78 p-4 backdrop-blur-[2px]">
-      <div className="anim-pop panel w-full max-w-sm p-6 text-center">
-        <h2 className="font-display text-4xl uppercase text-grass-400 drop-shadow-[0_4px_0_rgba(7,17,8,0.9)]">
+      <div className="anim-pop panel w-full max-w-sm p-5 text-center sm:p-6">
+        <h2 className="font-display text-3xl uppercase text-grass-400 drop-shadow-[0_4px_0_rgba(7,17,8,0.9)] sm:text-4xl">
           Пауза
         </h2>
-        <p className="mt-1 text-[13px] text-grass-200/60">Пшеница подождёт. Боты — вряд ли.</p>
+        <p className="mt-1 text-[12px] text-grass-200/60 sm:text-[13px]">Пшеница подождёт. Боты — вряд ли.</p>
 
-        <div className="mt-5 flex flex-col gap-2.5">
-          <button onClick={onResume} className="btn-blade flex items-center justify-center gap-2 px-6 py-3 text-lg">
-            <IconPlay size={18} /> Продолжить
+        <div className="mt-4 flex flex-col gap-2 sm:mt-5 sm:gap-2.5">
+          <button onClick={onResume} className="btn-blade flex items-center justify-center gap-2 px-5 py-2.5 text-base sm:px-6 sm:py-3 sm:text-lg">
+            <IconPlay size={16} className="sm:h-[18px] sm:w-[18px]" /> Продолжить
           </button>
-          <button onClick={onToggleMute} className="btn-bark flex items-center justify-center gap-2 px-6 py-2.5 text-base">
-            {muted ? <IconMuted size={17} /> : <IconSound size={17} />}
+          <button onClick={onToggleMute} className="btn-bark flex items-center justify-center gap-2 px-5 py-2 text-sm sm:px-6 sm:py-2.5 sm:text-base">
+            {muted ? <IconMuted size={15} /> : <IconSound size={15} />}
             Звук: {muted ? "выкл" : "вкл"}
           </button>
-          <button onClick={onQuit} className="btn-bark px-6 py-2.5 text-base">
+          <button onClick={onQuit} className="btn-bark px-5 py-2 text-sm sm:px-6 sm:py-2.5 sm:text-base">
             Сдаться и в меню
           </button>
         </div>

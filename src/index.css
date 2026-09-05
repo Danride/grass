@@ -231,6 +231,20 @@ canvas.game-surface {
   display: block;
 }
 
+/* компактнее на телефонах */
+@media (max-width: 639px) {
+  .help-shrink li {
+    font-size: 12px;
+  }
+  .help-shrink .zone-note {
+    font-size: 11px;
+  }
+  .kbd {
+    font-size: 9px;
+    padding: 1px 5px;
+  }
+}
+
 /* ---------- живой пшеничный фон меню ---------- */
 
 .wheat-stalk {

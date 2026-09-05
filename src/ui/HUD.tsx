@@ -41,7 +41,7 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
           const dx = t.clientX - base.current.x;
           const dy = t.clientY - base.current.y;
           const len = Math.hypot(dx, dy);
-          const cl = Math.min(len, 48);
+          const cl = Math.min(len, 30);
           const nx = len > 4 ? (dx / len) * cl : 0;
           const ny = len > 4 ? (dy / len) * cl : 0;
           setJoy({ bx: base.current.x, by: base.current.y, kx: base.current.x + nx, ky: base.current.y + ny });
@@ -79,32 +79,32 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
   return (
     <div className="pointer-events-none absolute inset-0 z-20 select-none">
       {/* ===== верх слева: игрок ===== */}
-      <div className={`absolute left-2 top-2 sm:left-3 sm:top-3 ${isTouch ? "w-[44vw] max-w-[210px]" : "w-60"}`}>
-        <div className="hud-chip px-2.5 py-2">
+      <div className={`absolute ${isTouch ? "left-1.5 top-1.5 w-[40vw] max-w-[185px]" : "left-2 top-2 sm:left-3 sm:top-3 w-60"}`}>
+        <div className={`hud-chip ${isTouch ? "px-2 py-1.5" : "px-2.5 py-2"}`}>
           <div className="flex items-baseline justify-between gap-2">
-            <span className={`font-display leading-none ${isTouch ? "text-[13px]" : "text-sm"} text-grass-200 truncate`}>
+            <span className={`font-display leading-none ${isTouch ? "text-[11px]" : "text-sm"} text-grass-200 truncate`}>
               {hud.meName ?? "Косарь"}
             </span>
-            <span className="font-display text-[10px] leading-none text-sun-400">ур. {hud.level}</span>
+            <span className={`font-display leading-none text-sun-400 ${isTouch ? "text-[9px]" : "text-[10px]"}`}>ур. {hud.level}</span>
           </div>
-          <div className={`mt-1 flex items-center justify-between font-display leading-none text-grass-300 ${isTouch ? "text-[11px]" : "text-[13px]"}`}>
+          <div className={`mt-0.5 flex items-center justify-between font-display leading-none text-grass-300 ${isTouch ? "text-[10px]" : "text-[13px] mt-1"}`}>
             <span>{hud.score.toLocaleString("ru-RU")}</span>
-            <span className="text-grass-200/50 text-[10px] flex items-center gap-1.5">
-              <IconGrass size={11} className="text-grass-400" />
+            <span className={`text-grass-200/50 flex items-center gap-1.5 ${isTouch ? "text-[8px]" : "text-[10px]"}`}>
+              <IconGrass size={isTouch ? 10 : 11} className="text-grass-400" />
               {hud.grass}
-              <IconBot size={11} className="text-blood-400" />
+              <IconBot size={isTouch ? 10 : 11} className="text-blood-400" />
               {hud.kills}
             </span>
           </div>
           {/* xp */}
-          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-pit-950/80">
+          <div className={`mt-1 overflow-hidden rounded-full bg-pit-950/80 ${isTouch ? "h-1" : "h-1.5 mt-1.5"}`}>
             <div
               className="h-full rounded-full bg-gradient-to-r from-sun-600 to-sun-400 transition-[width] duration-200"
               style={{ width: xpPct + "%" }}
             />
           </div>
           {/* hp */}
-          <div className={`mt-1 h-2.5 overflow-hidden rounded-md border border-pit-600 bg-pit-950/80 ${lowHp ? "anim-blink" : ""}`}>
+          <div className={`mt-1 overflow-hidden rounded-md border border-pit-600 bg-pit-950/80 ${lowHp ? "anim-blink" : ""} ${isTouch ? "h-2" : "h-2.5"}`}>
             <div
               className={`h-full rounded-md transition-[width] duration-150 ${
                 hpPct > 50 ? "bg-gradient-to-r from-grass-600 to-grass-400" : hpPct > 25 ? "bg-gradient-to-r from-sun-600 to-sun-400" : "bg-gradient-to-r from-blood-600 to-blood-400"
@@ -112,7 +112,7 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
               style={{ width: hpPct + "%" }}
             />
           </div>
-          <div className="mt-0.5 flex justify-between text-[9px] font-bold leading-none text-grass-200/55">
+          <div className={`mt-0.5 flex justify-between font-bold leading-none text-grass-200/55 ${isTouch ? "text-[8px]" : "text-[9px]"}`}>
             <span>{hud.hp}/{hud.maxHp}</span>
             {!isTouch && (
               <span className="flex items-center gap-1">
@@ -122,7 +122,7 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
             )}
           </div>
           {/* выносливость */}
-          <div className={`mt-1 h-1.5 overflow-hidden rounded-full border border-pit-600 bg-pit-950/80 ${hud.boosting ? "shadow-[0_0_8px_rgba(255,210,63,0.7)]" : ""}`}>
+          <div className={`mt-1 overflow-hidden rounded-full border border-pit-600 bg-pit-950/80 ${hud.boosting ? "shadow-[0_0_8px_rgba(255,210,63,0.7)]" : ""} ${isTouch ? "h-1" : "h-1.5"}`}>
             <div
               className={`h-full rounded-full transition-[width] duration-150 ${hud.boosting ? "bg-sun-300" : "bg-sun-600/80"}`}
               style={{ width: hud.boost + "%" }}
@@ -131,10 +131,10 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
         </div>
 
         {/* бафы + комбо */}
-        <div className="mt-1.5 flex items-center gap-1.5">
+        <div className={`flex items-center ${isTouch ? "mt-1 gap-1" : "mt-1.5 gap-1.5"}`}>
           {hud.buffs.power > 0 && (
             <span
-              className="grid h-5 min-w-5 place-items-center rounded-full border border-[#ff5040] bg-[#ff504055] px-1 font-display text-[9px] text-white"
+              className={`grid min-w-5 place-items-center rounded-full border border-[#ff5040] bg-[#ff504055] px-1 font-display text-white ${isTouch ? "h-4 text-[8px]" : "h-5 text-[9px]"}`}
               style={{ textShadow: "0 1px 2px #000" }}
               title="Сила ×1.4"
             >
@@ -143,7 +143,7 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
           )}
           {hud.buffs.speed > 0 && (
             <span
-              className="grid h-5 min-w-5 place-items-center rounded-full border border-[#4ac6ff] bg-[#4ac6ff55] px-1 font-display text-[9px] text-white"
+              className={`grid min-w-5 place-items-center rounded-full border border-[#4ac6ff] bg-[#4ac6ff55] px-1 font-display text-white ${isTouch ? "h-4 text-[8px]" : "h-5 text-[9px]"}`}
               style={{ textShadow: "0 1px 2px #000" }}
               title="Скорость ×1.5"
             >
@@ -153,7 +153,7 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
           {hud.comboMult > 1.05 && (
             <span
               key={Math.round(hud.combo * 10)}
-              className={`anim-combo hud-chip px-2 py-0.5 font-display text-[11px] leading-none text-sun-300 ${hud.comboMult >= 2.5 ? "border-sun-500 shadow-[0_0_10px_rgba(255,210,63,0.5)]" : ""}`}
+              className={`anim-combo hud-chip px-2 py-0.5 font-display leading-none text-sun-300 ${isTouch ? "text-[9px]" : "text-[11px]"} ${hud.comboMult >= 2.5 ? "border-sun-500 shadow-[0_0_10px_rgba(255,210,63,0.5)]" : ""}`}
             >
               ×{hud.comboMult.toFixed(2)}
             </span>
@@ -162,20 +162,20 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
       </div>
 
       {/* ===== верх справа: кнопки + лидерборд ===== */}
-      <div className="absolute right-2 top-2 flex items-center gap-1.5 sm:right-3 sm:top-3">
+      <div className={`absolute flex items-center ${isTouch ? "right-1.5 top-1.5 gap-1" : "right-2 top-2 gap-1.5 sm:right-3 sm:top-3"}`}>
         <button
           onClick={onToggleMute}
-          className="pointer-events-auto grid h-8 w-8 place-items-center rounded-lg hud-chip text-grass-300 active:scale-95 sm:h-9 sm:w-9"
+          className={`pointer-events-auto grid place-items-center rounded-lg hud-chip text-grass-300 active:scale-95 ${isTouch ? "h-7 w-7" : "h-8 w-8 sm:h-9 sm:w-9"}`}
           aria-label="звук"
         >
-          {muted ? <IconMuted size={15} /> : <IconSound size={15} />}
+          {muted ? <IconMuted size={isTouch ? 13 : 15} /> : <IconSound size={isTouch ? 13 : 15} />}
         </button>
         <button
           onClick={onPause}
-          className="pointer-events-auto grid h-8 w-8 place-items-center rounded-lg hud-chip text-grass-300 active:scale-95 sm:h-9 sm:w-9"
+          className={`pointer-events-auto grid place-items-center rounded-lg hud-chip text-grass-300 active:scale-95 ${isTouch ? "h-7 w-7" : "h-8 w-8 sm:h-9 sm:w-9"}`}
           aria-label="пауза"
         >
-          <IconPause size={15} />
+          <IconPause size={isTouch ? 13 : 15} />
         </button>
       </div>
 
@@ -207,9 +207,9 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
       </div>
 
       {/* ===== зона внизу по центру ===== */}
-      <div key={hud.zone} className={`anim-zone absolute left-1/2 -translate-x-1/2 ${isTouch ? "bottom-2" : "top-3"}`}>
+      <div key={hud.zone} className={`anim-zone absolute left-1/2 -translate-x-1/2 ${isTouch ? "bottom-1.5" : "top-3"}`}>
         <div
-          className={`hud-chip px-3 py-1 font-display uppercase tracking-wider ${isTouch ? "text-[10px]" : "text-xs"} ${
+          className={`hud-chip font-display uppercase tracking-wider ${isTouch ? "px-2 py-0.5 text-[9px]" : "px-3 py-1 text-xs"} ${
             hud.danger ? "border-blood-500 text-blood-400 anim-blink" : "text-sun-300"
           }`}
         >
@@ -226,8 +226,8 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
 
       {/* подсказка старта */}
       {hud.time < 7 && (
-        <div className="anim-pop absolute bottom-[18%] left-1/2 w-[92vw] max-w-sm -translate-x-1/2 text-center">
-          <div className="panel px-4 py-2.5 text-[13px] leading-snug text-grass-200">
+        <div className={`anim-pop absolute left-1/2 -translate-x-1/2 text-center ${isTouch ? "bottom-[15%] w-[88vw] max-w-[300px]" : "bottom-[18%] w-[92vw] max-w-sm"}`}>
+          <div className={`panel leading-snug text-grass-200 ${isTouch ? "px-3 py-2 text-[11px]" : "px-4 py-2.5 text-[13px]"}`}>
             {isTouch ? (
               <>Палец <b className="text-grass-300">слева</b> — джойстик, удержи <b className="text-sun-300">справа</b> — спринт. Коси пшеницу и зелёных ботов!</>
             ) : (
@@ -241,18 +241,18 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
       {isTouch && joy && (
         <div
           className="absolute z-20 rounded-full border-2 border-grass-500/50 bg-pit-950/25"
-          style={{ left: joy.bx - 46, top: joy.by - 46, width: 92, height: 92 }}
+          style={{ left: joy.bx - 39, top: joy.by - 39, width: 78, height: 78 }}
         >
           <div
             className="absolute rounded-full border-2 border-grass-300 bg-grass-600/70 shadow-[0_0_14px_rgba(111,211,44,0.5)]"
-            style={{ left: 46 + (joy.kx - joy.bx) - 21, top: 46 + (joy.ky - joy.by) - 21, width: 42, height: 42 }}
+            style={{ left: 39 + (joy.kx - joy.bx) - 17, top: 39 + (joy.ky - joy.by) - 17, width: 34, height: 34 }}
           />
         </div>
       )}
 
       {/* индикатор спринта на таче */}
       {isTouch && hud.boosting && (
-        <div className="absolute bottom-6 right-5 rounded-full border-2 border-sun-500 bg-sun-500/20 px-3 py-1.5 font-display text-[11px] uppercase text-sun-300">
+        <div className="absolute bottom-2.5 right-2.5 rounded-full border-2 border-sun-500 bg-sun-500/20 px-2 py-1 font-display text-[9px] uppercase text-sun-300">
           спринт
         </div>
       )}
