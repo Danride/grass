@@ -181,7 +181,6 @@ function GameView({ cfg, isTouch, muted, onToggleMute, onDeath, onQuit }: GameVi
           onResume={() => setPaused(false)}
           onToggleMute={onToggleMute}
           onQuit={onQuit}
-          isTouch={isTouch}
         />
       )}
     </div>
@@ -189,13 +188,12 @@ function GameView({ cfg, isTouch, muted, onToggleMute, onDeath, onQuit }: GameVi
 }
 
 function PauseOverlay({
-  muted, onResume, onToggleMute, onQuit, isTouch,
+  muted, onResume, onToggleMute, onQuit,
 }: {
   muted: boolean;
   onResume: () => void;
   onToggleMute: () => void;
   onQuit: () => void;
-  isTouch: boolean;
 }) {
   return (
     <div className="absolute inset-0 z-30 flex items-center justify-center bg-pit-950/78 p-4 backdrop-blur-[2px]">
@@ -218,16 +216,6 @@ function PauseOverlay({
           </button>
         </div>
 
-        <div className="mt-4 text-[12px] leading-relaxed text-grass-200/50">
-          {isTouch ? (
-            <>Джойстик слева · кнопка «Буст» справа</>
-          ) : (
-            <>
-              <span className="kbd">Esc</span> — пауза · <span className="kbd">ЛКМ</span> — спринт ·{" "}
-              <span className="kbd">M</span> — звук
-            </>
-          )}
-        </div>
       </div>
     </div>
   );

@@ -142,19 +142,6 @@ body {
   box-shadow: 0 1px 0 rgba(5, 16, 6, 0.32);
 }
 
-.kbd {
-  font-family: var(--font-display);
-  font-size: 11px;
-  color: #ffe38a;
-  background: #2a1c08;
-  border: 1.5px solid #6b4a1f;
-  border-bottom-width: 3px;
-  border-radius: 6px;
-  padding: 2px 7px;
-  display: inline-block;
-  line-height: 1.35;
-}
-
 .tab-btn {
   font-family: var(--font-display);
   text-transform: uppercase;
@@ -229,20 +216,6 @@ body {
 canvas.game-surface {
   touch-action: none;
   display: block;
-}
-
-/* компактнее на телефонах */
-@media (max-width: 639px) {
-  .help-shrink li {
-    font-size: 12px;
-  }
-  .help-shrink .zone-note {
-    font-size: 11px;
-  }
-  .kbd {
-    font-size: 9px;
-    padding: 1px 5px;
-  }
 }
 
 /* ---------- живой пшеничный фон меню ---------- */

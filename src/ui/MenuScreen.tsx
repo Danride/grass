@@ -9,7 +9,7 @@ import {
   IconSkull, IconSweep, IconTrophy, IconGrass, IconClock, IconMuted, IconSound,
 } from "./icons";
 
-type Tab = "start" | "skins" | "shop" | "help";
+type Tab = "start" | "skins" | "shop";
 
 interface MenuProps {
   save: SaveData;
@@ -81,13 +81,12 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
         </header>
 
         {/* -------- вкладки -------- */}
-        <nav className="mt-5 grid w-full max-w-xl grid-cols-4 gap-1.5">
+        <nav className="mt-5 grid w-full max-w-xl grid-cols-3 gap-1.5">
           {(
             [
               ["start", "Начать"],
               ["skins", "Скин"],
               ["shop", "Магазин"],
-              ["help", "Подсказки"],
             ] as [Tab, string][]
           ).map(([t, label]) => (
             <button
@@ -130,10 +129,6 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                 <Record label="Забегов" value={fmt(save.runs)} icon={<IconBot size={15} className="text-[#d8c08a]" />} />
               </div>
 
-              <p className="mt-4 text-center text-[12px] leading-relaxed text-[#c8ab74]">
-                Коси пшеницу — качай уровень и радиус косы. Скошенных ботов всасывай вместе с опытом.
-                {" "}<button className="font-bold text-sun-300 underline decoration-dotted underline-offset-2" onClick={() => switchTab("help")}>Как играть?</button>
-              </p>
             </section>
           )}
 
@@ -245,100 +240,6 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
             </section>
           )}
 
-          {tab === "help" && (
-            <section key="help" className="anim-pop panel-earth p-3 sm:p-6">
-              <SectionTitle title="Подсказки косарю" hint="прочитал — уже сильнее половины поля" />
-              <div className="help-shrink mt-2.5 grid gap-2 sm:mt-3 sm:gap-2.5 md:grid-cols-2">
-                <HelpCard title="Управление — компьютер">
-                  <HelpRow k="Мышь" v="двигаться к курсору" />
-                  <HelpRow k="W A S D" v="двигаться (работает и ЦФЫВ)" />
-                  <HelpRow k="ЛКМ (удерживать)" v="спринт +75%, пока есть выносливость" />
-                  <HelpRow k="Esc" v="пауза" />
-                  <HelpRow k="M" v="звук вкл / выкл" />
-                </HelpCard>
-                <HelpCard title="Управление — телефон">
-                  <HelpRow k="Палец слева" v="появится джойстик — веди им" />
-                  <HelpRow k="Удержать справа" v="спринт +75%, пока есть выносливость" />
-                  <HelpRow k="Пауза" v="кнопка сверху справа" />
-                </HelpCard>
-                <HelpCard title="Как косить и качаться">
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-grass-400" />
-                    Коса крутится сама — просто веди героя по пшенице. Срезанные колосья дают
-                    опыт и очки, а жёлтые светлячки сами летят к тебе.
-                  </li>
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-sun-400" />
-                    Быстрая жатва без пауз разгоняет комбо — множитель опыта до ×3.
-                  </li>
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-dew-400" />
-                    Каждый уровень делает героя крупнее, бьёт больнее и заметно шире размахивает
-                    косой. Срезанная пшеница отрастает через несколько секунд.
-                  </li>
-                </HelpCard>
-                <HelpCard title="Боты и бой">
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-grass-400" />
-                    На поле больше 100 косарей по всей карте. Зелёное имя — бот слабее тебя,
-                    красное — опаснее. Точка рядом с именем показывает его тактику.
-                  </li>
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blood-400" />
-                    Удар косой отбрасывает и ранит. Скошенный бот отдаёт весь свой опыт —
-                    охоться на зелёных и беги от красных.
-                  </li>
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-sun-400" />
-                    За забег капает роса — валюта для скинов и улучшений в магазине.
-                  </li>
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blood-400" />
-                    Боты хитры: охотятся стаей, добивают раненых, отступают лечиться и охотятся за зельями.
-                  </li>
-                </HelpCard>
-                <HelpCard title="Случайные зелья">
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blood-400" />
-                    <span><b className="text-blood-400">Зелье силы</b> — урон ×1.4 на 8 секунд.</span>
-                  </li>
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-dew-400" />
-                    <span><b className="text-dew-400">Зелье ветра</b> — скорость ×1.5 на 8 секунд.</span>
-                  </li>
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-grass-400" />
-                    <span><b className="text-grass-400">Зелье здоровья</b> — сразу +45% сил.</span>
-                  </li>
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full" style={{ background: "#c58cff" }} />
-                    <span><b style={{ color: "#c58cff" }}>Зелье роста</b> — мгновенно +1 уровень (редкое!).</span>
-                  </li>
-                  <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-sun-400" />
-                    Зелья светятся на поле — и боты тоже за ними охотятся, успевай первым!
-                  </li>
-                </HelpCard>
-              </div>
-
-              <div className="mt-3 rounded-xl border-2 border-[#6b4a1f] bg-[#241708] p-3">
-                <div className="font-display text-xs uppercase tracking-widest text-[#d8c08a]">
-                  Зоны пшеничного поля
-                </div>
-                <div className="mt-2 grid gap-x-4 gap-y-1.5 text-[12px] leading-snug text-[#e8d9b8] sm:grid-cols-2">
-                  <ZoneRow color="#9a7038" name="Спелое поле" note="центр — безопасный старт, опыта меньше" />
-                  <ZoneRow color="#8a6134" name="Пшеничное поле" note="основная карта, колосья средней высоты" />
-                  <ZoneRow color="#d9a83f" name="Высокая рожь" note="густые заросли на севере — прячься и фарми" />
-                  <ZoneRow color="#ff5040" name="Маковое поле" note="восток: цветы дают ×1.7 опыта" />
-                  <ZoneRow color="#7a5527" name="Сухое поле" note="юг: колючки царапают, опыта больше" />
-                  <ZoneRow color="#47663a" name="Гнилые топи" note="запад: вязко, скорость −28%" />
-                  <ZoneRow color="#dcebf0" name="Мерзлота" note="северо-запад: скользко и богато" />
-                  <ZoneRow color="#d3ac5c" name="Сухие пески" note="северо-восток: кактусы и много опыта" />
-                  <ZoneRow color="#ff8c3d" name="Пепелища" note="юго-восток: жгут до 12 уровня, опыта ×6" />
-                </div>
-              </div>
-            </section>
-          )}
         </main>
 
         <footer className="mt-3 pb-2 text-center text-[10px] text-[#8a6f42] sm:mt-4 sm:text-[11px]">
@@ -390,36 +291,6 @@ function Record({ label, value, icon }: { label: string; value: string; icon: Re
         <div className="truncate text-[8px] font-bold uppercase tracking-wider text-[#8a6f42] sm:text-[10px]">{label}</div>
         <div className="font-display text-sm leading-tight text-[#ffe9c4] sm:text-base">{value}</div>
       </div>
-    </div>
-  );
-}
-
-function HelpCard({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div className="rounded-xl border-2 border-[#6b4a1f] bg-[#241708] p-2.5 sm:p-3">
-      <div className="font-display text-[10px] uppercase tracking-widest text-[#d8c08a] sm:text-xs">{title}</div>
-      <ul className="mt-1.5 space-y-1.5 sm:mt-2 sm:space-y-2">{children}</ul>
-    </div>
-  );
-}
-
-function HelpRow({ k, v }: { k: string; v: string }) {
-  return (
-    <li className="flex items-center gap-2 text-[12px] text-[#e8d9b8] sm:text-[13px]">
-      <span className="kbd shrink-0">{k}</span>
-      <span className="leading-snug">{v}</span>
-    </li>
-  );
-}
-
-function ZoneRow({ color, name, note }: { color: string; name: string; note: string }) {
-  return (
-    <div className="zone-note flex items-start gap-2">
-      <span className="mt-1 h-3 w-3 shrink-0 rounded-sm border border-black/40" style={{ background: color }} />
-      <span>
-        <b className="text-[#ffe9c4]">{name}</b>
-        <span className="text-[#c8ab74]"> — {note}</span>
-      </span>
     </div>
   );
 }

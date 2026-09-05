@@ -217,26 +217,6 @@ export function HUD({ hud, engine, isTouch, muted, onPause, onToggleMute }: HUDP
         </div>
       </div>
 
-      {/* подсказка клавиш (десктоп) */}
-      {!isTouch && (
-        <div className="absolute bottom-2 right-3 hidden text-[11px] text-grass-200/45 md:block">
-          <span className="kbd">ЛКМ</span> спринт · <span className="kbd">Esc</span> пауза
-        </div>
-      )}
-
-      {/* подсказка старта */}
-      {hud.time < 7 && (
-        <div className={`anim-pop absolute left-1/2 -translate-x-1/2 text-center ${isTouch ? "bottom-[15%] w-[88vw] max-w-[300px]" : "bottom-[18%] w-[92vw] max-w-sm"}`}>
-          <div className={`panel leading-snug text-grass-200 ${isTouch ? "px-3 py-2 text-[11px]" : "px-4 py-2.5 text-[13px]"}`}>
-            {isTouch ? (
-              <>Палец <b className="text-grass-300">слева</b> — джойстик, удержи <b className="text-sun-300">справа</b> — спринт. Коси пшеницу и зелёных ботов!</>
-            ) : (
-              <>Двигайся <b className="text-grass-300">мышью</b>, зажми <b className="text-sun-300">ЛКМ</b> — спринт. Коси пшеницу и зелёных ботов!</>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* джойстик (только тач) */}
       {isTouch && joy && (
         <div
