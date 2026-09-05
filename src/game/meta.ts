@@ -1,3 +1,5 @@
+export type PatternId = "none" | "stripes" | "dots" | "checker" | "zigzag" | "rings" | "patches";
+
 export interface SkinDef {
   id: string;
   name: string;
@@ -7,75 +9,72 @@ export interface SkinDef {
   blade: string;
   bladeRim: string;
   trail: string;
+  ink: string;
+  pattern: PatternId;
   cost: number;
 }
 
+/* Шкала от чёрного к белому + узорчатые скины за росу */
 export const SKINS: SkinDef[] = [
   {
-    id: "classic",
-    name: "Газонщик",
-    desc: "Верный трудяга с острой косой",
-    body: "#74e33f",
-    rim: "#2e7d1f",
-    blade: "#eef9e2",
-    bladeRim: "#9db88c",
-    trail: "#8def4a",
-    cost: 0,
+    id: "ugol", name: "Уголь", desc: "Чёрный, как чернозём",
+    body: "#101114", rim: "#04050a", blade: "#eef1f4", bladeRim: "#8a929c", trail: "#3a3f47",
+    ink: "#2e3238", pattern: "none", cost: 0,
   },
   {
-    id: "sun",
-    name: "Подсолнух",
-    desc: "Семечки сами себя не соберут",
-    body: "#ffd23f",
-    rim: "#a06b00",
-    blade: "#fff2b0",
-    bladeRim: "#c7a24a",
-    trail: "#ffd23f",
-    cost: 0,
+    id: "grafit", name: "Графит", desc: "Острее простого карандаша",
+    body: "#2b2f36", rim: "#12141a", blade: "#eef1f4", bladeRim: "#99a1ab", trail: "#5a606b",
+    ink: "#454b54", pattern: "none", cost: 0,
   },
   {
-    id: "night",
-    name: "Ночной жнец",
-    desc: "Косит после заката. Светится",
-    body: "#2b3646",
-    rim: "#0d141d",
-    blade: "#8dff3c",
-    bladeRim: "#2e7d1f",
-    trail: "#8dff3c",
-    cost: 60,
+    id: "stal", name: "Сталь", desc: "Закалённый характер",
+    body: "#5d646e", rim: "#31353c", blade: "#f4f6f8", bladeRim: "#a7aeb8", trail: "#8b939e",
+    ink: "#3d434b", pattern: "none", cost: 60,
   },
   {
-    id: "frost",
-    name: "Мороз",
-    desc: "Колосья стынут, коса поёт",
-    body: "#7fd8ff",
-    rim: "#1e6f9e",
-    blade: "#eafcff",
-    bladeRim: "#7fb3c9",
-    trail: "#a8ecff",
-    cost: 120,
+    id: "tuman", name: "Туман", desc: "Растворяется над полем",
+    body: "#9aa3ad", rim: "#666e78", blade: "#ffffff", bladeRim: "#b6bdc6", trail: "#c3cad2",
+    ink: "#7c8590", pattern: "none", cost: 120,
   },
   {
-    id: "gold",
-    name: "Золотая коса",
-    desc: "Для тех, кто косит с шиком",
-    body: "#f5b93f",
-    rim: "#8a5a00",
-    blade: "#fff6c9",
-    bladeRim: "#d8b23f",
-    trail: "#ffe38a",
-    cost: 240,
+    id: "serebro", name: "Серебро", desc: "Блестит на солнце",
+    body: "#c9d1d9", rim: "#8f97a1", blade: "#ffffff", bladeRim: "#c0c7cf", trail: "#e2e8ee",
+    ink: "#9aa3ad", pattern: "none", cost: 200,
   },
   {
-    id: "ember",
-    name: "Пепелище",
-    desc: "После него поле уже не колосится",
-    body: "#ff6a3d",
-    rim: "#7a1e05",
-    blade: "#ffd9a0",
-    bladeRim: "#c96a2a",
-    trail: "#ff8c3d",
-    cost: 380,
+    id: "sneg", name: "Снег", desc: "Белый. Почти святой",
+    body: "#f4f7fa", rim: "#b2bac3", blade: "#22262c", bladeRim: "#545b64", trail: "#ffffff",
+    ink: "#d4dae1", pattern: "none", cost: 300,
+  },
+  {
+    id: "zebra", name: "Зебра", desc: "Полосы косят первыми",
+    body: "#15161a", rim: "#04050a", blade: "#f4f7fa", bladeRim: "#8a929c", trail: "#3a3f47",
+    ink: "#f4f7fa", pattern: "stripes", cost: 380,
+  },
+  {
+    id: "dalmatin", name: "Далматин", desc: "Гавкает на сорняки",
+    body: "#f4f7fa", rim: "#b2bac3", blade: "#22262c", bladeRim: "#545b64", trail: "#ffffff",
+    ink: "#15161a", pattern: "dots", cost: 500,
+  },
+  {
+    id: "shahmaty", name: "Шахматы", desc: "Мат и чебрец",
+    body: "#e9edf1", rim: "#aab2bb", blade: "#15161a", bladeRim: "#545b64", trail: "#f4f7fa",
+    ink: "#15161a", pattern: "checker", cost: 650,
+  },
+  {
+    id: "molniya", name: "Молния", desc: "Зигзаг по пшенице",
+    body: "#2b2f36", rim: "#12141a", blade: "#f4f7fa", bladeRim: "#99a1ab", trail: "#5a606b",
+    ink: "#f4f7fa", pattern: "zigzag", cost: 800,
+  },
+  {
+    id: "mishen", name: "Мишень", desc: "Главный на поле — ты",
+    body: "#f4f7fa", rim: "#b2bac3", blade: "#22262c", bladeRim: "#545b64", trail: "#ffffff",
+    ink: "#15161a", pattern: "rings", cost: 1000,
+  },
+  {
+    id: "panda", name: "Панда", desc: "Бамбук тут не растёт",
+    body: "#f4f7fa", rim: "#b2bac3", blade: "#22262c", bladeRim: "#545b64", trail: "#ffffff",
+    ink: "#15161a", pattern: "patches", cost: 1250,
   },
 ];
 
@@ -128,8 +127,8 @@ export function defaultSave(): SaveData {
   return {
     dew: 0,
     name: "",
-    skin: "classic",
-    unlocked: ["classic", "sun"],
+    skin: "ugol",
+    unlocked: ["ugol", "grafit"],
     upgrades: { blade: 0, sweep: 0, legs: 0, vitality: 0, regen: 0 },
     best: { score: 0, level: 0, kills: 0, grass: 0, time: 0 },
     runs: 0,
@@ -145,12 +144,20 @@ export function loadSave(): SaveData {
     if (!raw) return defaultSave();
     const parsed = JSON.parse(raw) as Partial<SaveData>;
     const def = defaultSave();
+    const ids = SKINS.map((s) => s.id);
+    let unlocked = (parsed.unlocked ?? def.unlocked).filter((id) => ids.includes(id));
+    if (!unlocked.includes("ugol")) unlocked = ["ugol", ...unlocked];
+    if (!unlocked.includes("grafit")) unlocked = ["grafit", ...unlocked];
+    let skin = parsed.skin ?? def.skin;
+    if (!ids.includes(skin)) skin = "ugol";
+    if (!unlocked.includes(skin)) skin = "ugol";
     return {
       ...def,
       ...parsed,
+      skin,
       upgrades: { ...def.upgrades, ...(parsed.upgrades ?? {}) },
       best: { ...def.best, ...(parsed.best ?? {}) },
-      unlocked: parsed.unlocked?.length ? parsed.unlocked : def.unlocked,
+      unlocked,
     };
   } catch {
     return defaultSave();
@@ -170,44 +177,9 @@ export const fmtTime = (sec: number) =>
   Math.floor(sec / 60) + ":" + String(Math.floor(sec % 60)).padStart(2, "0");
 
 export const BOT_NAMES = [
-  "Дачник",
-  "Бабка Зина",
-  "Трактор",
-  "Крапива",
-  "Хрен",
-  "Лопух",
-  "Пырей",
-  "Сныть",
-  "Одуван",
-  "Борщевик",
-  "Клевер",
-  "Чертополох",
-  "Мятлик",
-  "Ревень",
-  "Щавель",
-  "Укроп",
-  "Газонщик-2",
-  "Секатор",
-  "Комбайнёр",
-  "Сеновал",
-  "Колосок",
-  "Медовик",
-  "Тракторист",
-  "Хлебороб",
-  "Солома",
-  "Жнец",
-  "Рожь",
-  "Овёс",
-  "Мельник",
-  "Зерно",
-  "Ватрушка",
-  "Сухарь",
-  "Отруби",
-  "Каравай",
-  "Элеватор",
-  "Целина",
-  "Помол",
-  "Дернина",
-  "Просо",
-  "Гречиха",
+  "Дачник", "Бабка Зина", "Трактор", "Крапива", "Хрен", "Лопух", "Пырей", "Сныть",
+  "Одуван", "Борщевик", "Клевер", "Чертополох", "Мятлик", "Ревень", "Щавель", "Укроп",
+  "Газонщик-2", "Секатор", "Комбайнёр", "Сеновал", "Колосок", "Медовик", "Тракторист",
+  "Хлебороб", "Солома", "Жнец", "Рожь", "Овёс", "Мельник", "Зерно", "Ватрушка",
+  "Сухарь", "Отруби", "Каравай", "Элеватор", "Целина", "Помол", "Дернина", "Просо", "Гречиха",
 ];

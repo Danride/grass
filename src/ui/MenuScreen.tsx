@@ -139,7 +139,7 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
 
           {tab === "skins" && (
             <section key="skins" className="anim-pop panel-earth p-4 sm:p-6">
-              <SectionTitle title="Выбор скина" hint="роса копится за каждый забег" />
+              <SectionTitle title="Выбор скина" hint="от угля до снега · узоры — за росу" />
               <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                 {SKINS.map((s) => {
                   const owned = save.unlocked.includes(s.id);
@@ -252,13 +252,13 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                 <HelpCard title="Управление — компьютер">
                   <HelpRow k="Мышь" v="двигаться к курсору" />
                   <HelpRow k="W A S D" v="двигаться (работает и ЦФЫВ)" />
-                  <HelpRow k="Пробел" v="ускорение (тратит жёлтую шкалу)" />
+                  <HelpRow k="ЛКМ (удерживать)" v="спринт +75%, пока есть выносливость" />
                   <HelpRow k="Esc" v="пауза" />
                   <HelpRow k="M" v="звук вкл / выкл" />
                 </HelpCard>
                 <HelpCard title="Управление — телефон">
                   <HelpRow k="Палец слева" v="появится джойстик — веди им" />
-                  <HelpRow k="Кнопка «Буст»" v="ускорение справа внизу" />
+                  <HelpRow k="Удержать справа" v="спринт +75%, пока есть выносливость" />
                   <HelpRow k="Пауза" v="кнопка сверху справа" />
                 </HelpCard>
                 <HelpCard title="Как косить и качаться">
@@ -280,8 +280,8 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                 <HelpCard title="Боты и бой">
                   <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
                     <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-grass-400" />
-                    На поле больше 100 косарей. Зелёная метка на миникарте — слабее тебя,
-                    красная — опаснее.
+                    На поле больше 100 косарей по всей карте. Зелёное имя — бот слабее тебя,
+                    красное — опаснее. Точка рядом с именем показывает его тактику.
                   </li>
                   <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
                     <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blood-400" />
@@ -316,7 +316,7 @@ export function MenuScreen({ save, isTouch, onPlay, onSpend }: MenuProps) {
                   </li>
                   <li className="flex gap-2 text-[13px] leading-relaxed text-[#e8d9b8]">
                     <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-sun-400" />
-                    Зелья видны на миникарте цветными точками — и боты тоже их подбирают, успевай первым!
+                    Зелья светятся на поле — и боты тоже за ними охотятся, успевай первым!
                   </li>
                 </HelpCard>
               </div>
@@ -435,30 +435,87 @@ function UpgradeIcon({ id }: { id: UpgradeId }) {
 }
 
 function SkinPreview({ skin }: { skin: SkinDef }) {
+  const pid = "pat-" + skin.id;
+  let fill = skin.body;
+  let defs: ReactNode = null;
+  switch (skin.pattern) {
+    case "stripes":
+      fill = `url(#${pid})`;
+      defs = (
+        <pattern id={pid} width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="9" height="9" fill={skin.body} />
+          <rect width="4" height="9" fill={skin.ink} />
+        </pattern>
+      );
+      break;
+    case "dots":
+      fill = `url(#${pid})`;
+      defs = (
+        <pattern id={pid} width="11" height="11" patternUnits="userSpaceOnUse">
+          <rect width="11" height="11" fill={skin.body} />
+          <circle cx="3" cy="3" r="2.2" fill={skin.ink} />
+          <circle cx="8.5" cy="8.5" r="2.2" fill={skin.ink} />
+        </pattern>
+      );
+      break;
+    case "checker":
+      fill = `url(#${pid})`;
+      defs = (
+        <pattern id={pid} width="12" height="12" patternUnits="userSpaceOnUse">
+          <rect width="12" height="12" fill={skin.body} />
+          <rect width="6" height="6" fill={skin.ink} />
+          <rect x="6" y="6" width="6" height="6" fill={skin.ink} />
+        </pattern>
+      );
+      break;
+    case "zigzag":
+      fill = `url(#${pid})`;
+      defs = (
+        <pattern id={pid} width="14" height="10" patternUnits="userSpaceOnUse">
+          <rect width="14" height="10" fill={skin.body} />
+          <path d="M0 5 3.5 1 7 5 10.5 9 14 5" stroke={skin.ink} strokeWidth="2.6" fill="none" />
+        </pattern>
+      );
+      break;
+  }
   return (
     <div className="relative mx-auto h-16 w-16">
-      <div
-        className="absolute inset-0 rounded-full border-[3px]"
-        style={{ background: skin.body, borderColor: skin.rim }}
-      />
-      <div
-        className="absolute left-1/2 top-1/2 h-[120%] w-[7px] -translate-x-1/2 -translate-y-1/2 rotate-45 rounded"
-        style={{ background: "#6b4a1f" }}
-      />
-      <div
-        className="absolute left-1/2 top-1/2 h-[120%] w-[7px] -translate-x-1/2 -translate-y-1/2 -rotate-45 rounded"
-        style={{ background: "#6b4a1f" }}
-      />
-      <div
-        className="absolute -right-1 top-1/2 h-4 w-9 -translate-y-1/2 rounded-full border"
-        style={{ background: skin.blade, borderColor: skin.bladeRim }}
-      />
-      <div className="absolute left-[30%] top-[34%] h-2.5 w-2.5 rounded-full bg-white">
-        <div className="absolute right-0 top-0.5 h-1.5 w-1.5 rounded-full bg-[#10240f]" />
-      </div>
-      <div className="absolute left-[58%] top-[34%] h-2.5 w-2.5 rounded-full bg-white">
-        <div className="absolute right-0 top-0.5 h-1.5 w-1.5 rounded-full bg-[#10240f]" />
-      </div>
+      <svg viewBox="0 0 72 72" className="h-full w-full">
+        <defs>{defs}</defs>
+        {/* рукояти кос */}
+        <rect x="33.5" y="4" width="5" height="64" rx="2.5" fill="#6b4a1f" transform="rotate(45 36 36)" />
+        <rect x="33.5" y="4" width="5" height="64" rx="2.5" fill="#6b4a1f" transform="rotate(-45 36 36)" />
+        {/* лезвие */}
+        <rect x="52" y="30" width="17" height="9" rx="4.5" fill={skin.blade} stroke={skin.bladeRim} strokeWidth="1.5" />
+        {/* тело с узором */}
+        <circle cx="36" cy="36" r="24" fill={fill} stroke={skin.rim} strokeWidth="3" />
+        {skin.pattern === "rings" && (
+          <g fill="none" stroke={skin.ink} strokeWidth="3.2">
+            <circle cx="36" cy="36" r="8" />
+            <circle cx="36" cy="36" r="15.5" />
+            <circle cx="36" cy="36" r="2.6" fill={skin.ink} stroke="none" />
+          </g>
+        )}
+        {skin.pattern === "patches" && (
+          <g fill={skin.ink}>
+            <circle cx="27" cy="27" r="7" />
+            <circle cx="46" cy="31" r="5.5" />
+            <circle cx="33" cy="47" r="6.5" />
+          </g>
+        )}
+        {/* блик */}
+        <path d="M22 26a17 17 0 0 1 10-8" stroke="rgba(255,255,255,0.35)" strokeWidth="4" strokeLinecap="round" fill="none" />
+        {/* глаза */}
+        <circle cx="30" cy="32" r="4.4" fill="#fff" />
+        <circle cx="42" cy="32" r="4.4" fill="#fff" />
+        <circle cx="31.6" cy="32.6" r="2" fill="#10240f" />
+        <circle cx="43.6" cy="32.6" r="2" fill="#10240f" />
+      </svg>
+      {skin.pattern !== "none" && (
+        <span className="absolute -top-1 left-1/2 -translate-x-1/2 rounded bg-pit-800 px-1.5 py-px font-display text-[8px] uppercase tracking-wider text-sun-300 border border-[#6b4a1f]">
+          узор
+        </span>
+      )}
     </div>
   );
 }

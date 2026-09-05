@@ -223,7 +223,7 @@ function PauseOverlay({
             <>Джойстик слева · кнопка «Буст» справа</>
           ) : (
             <>
-              <span className="kbd">Esc</span> — пауза · <span className="kbd">Пробел</span> — буст ·{" "}
+              <span className="kbd">Esc</span> — пауза · <span className="kbd">ЛКМ</span> — спринт ·{" "}
               <span className="kbd">M</span> — звук
             </>
           )}

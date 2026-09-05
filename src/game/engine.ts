@@ -40,31 +40,31 @@ interface BiomeDef {
 const BIOMES: Record<BiomeId, BiomeDef> = {
   wheat: {
     name: "Пшеничное поле", ground: "#8a6134", groundAlt: "#815a2f",
-    blades: ["#d9a83f", "#c99a38", "#e6b74f"], density: 24, hMin: 20, hMax: 34,
+    blades: ["#d9a83f", "#c99a38", "#e6b74f"], density: 40, hMin: 22, hMax: 38,
     xp: 2, slow: 1, flower: 0.015, flowerColors: ["#fff2d0"],
     cactus: 0, ember: false, speckle: "#6b4a24",
   },
   ripe: {
     name: "Спелое поле", ground: "#9a7038", groundAlt: "#916934",
-    blades: ["#eab94f", "#dcab42", "#f4c862"], density: 26, hMin: 18, hMax: 30,
+    blades: ["#eab94f", "#dcab42", "#f4c862"], density: 44, hMin: 20, hMax: 34,
     xp: 1, slow: 1, flower: 0.02, flowerColors: ["#fff2d0"],
     cactus: 0, ember: false, speckle: "#77552a",
   },
   rye: {
     name: "Высокая рожь", ground: "#6e4c22", groundAlt: "#66461f",
-    blades: ["#b98c33", "#a87e2c", "#c99a3f"], density: 30, hMin: 30, hMax: 48,
+    blades: ["#b98c33", "#a87e2c", "#c99a3f"], density: 50, hMin: 34, hMax: 54,
     xp: 3, slow: 0.94, flower: 0, flowerColors: [],
     cactus: 0, ember: false, speckle: "#503718",
   },
   poppy: {
     name: "Маковое поле", ground: "#96652f", groundAlt: "#8d5e2b",
-    blades: ["#cfa044", "#c1923c", "#dcab4f"], density: 22, hMin: 16, hMax: 28,
+    blades: ["#cfa044", "#c1923c", "#dcab4f"], density: 36, hMin: 18, hMax: 30,
     xp: 3, slow: 1, flower: 0.3, flowerColors: ["#ff5040", "#ff7a3d", "#ff5040"],
     cactus: 0, ember: false, speckle: "#6e4a20",
   },
   dry: {
     name: "Сухое поле", ground: "#7a5527", groundAlt: "#724f24",
-    blades: ["#b08a3a", "#9c7a30", "#c49a44"], density: 18, hMin: 12, hMax: 22,
+    blades: ["#b08a3a", "#9c7a30", "#c49a44"], density: 30, hMin: 14, hMax: 24,
     xp: 4, slow: 1, flower: 0, flowerColors: [],
     cactus: 0.35, ember: false, speckle: "#59401d",
   },
@@ -163,6 +163,7 @@ interface FloatText { x: number; y: number; life: number; text: string; color: s
 
 export interface EntSkin {
   body: string; rim: string; blade: string; bladeRim: string; trail: string;
+  ink: string; pattern: string;
 }
 
 export type PotionKind = "power" | "speed" | "heal" | "growth";
@@ -211,12 +212,12 @@ interface Ent {
 }
 
 const BOT_SKINS: EntSkin[] = [
-  { body: "#58b64a", rim: "#245c1e", blade: "#e8f6da", bladeRim: "#9db88c", trail: "#58b64a" },
-  { body: "#7fb069", rim: "#3d5a2e", blade: "#eef5e0", bladeRim: "#a3b18a", trail: "#7fb069" },
-  { body: "#c9803d", rim: "#6e4318", blade: "#f2e0c8", bladeRim: "#b59a72", trail: "#c9803d" },
-  { body: "#5a9fb0", rim: "#274f5a", blade: "#dff2f5", bladeRim: "#8fb6bd", trail: "#5a9fb0" },
-  { body: "#a3b18a", rim: "#58614a", blade: "#eef2e4", bladeRim: "#b8c0a8", trail: "#a3b18a" },
-  { body: "#b05a5a", rim: "#5c2727", blade: "#f5dede", bladeRim: "#bd8f8f", trail: "#b05a5a" },
+  { body: "#58b64a", rim: "#245c1e", blade: "#e8f6da", bladeRim: "#9db88c", trail: "#58b64a", ink: "#245c1e", pattern: "none" },
+  { body: "#7fb069", rim: "#3d5a2e", blade: "#eef5e0", bladeRim: "#a3b18a", trail: "#7fb069", ink: "#3d5a2e", pattern: "none" },
+  { body: "#c9803d", rim: "#6e4318", blade: "#f2e0c8", bladeRim: "#b59a72", trail: "#c9803d", ink: "#6e4318", pattern: "none" },
+  { body: "#5a9fb0", rim: "#274f5a", blade: "#dff2f5", bladeRim: "#8fb6bd", trail: "#5a9fb0", ink: "#274f5a", pattern: "none" },
+  { body: "#a3b18a", rim: "#58614a", blade: "#eef2e4", bladeRim: "#b8c0a8", trail: "#a3b18a", ink: "#58614a", pattern: "none" },
+  { body: "#b05a5a", rim: "#5c2727", blade: "#f5dede", bladeRim: "#bd8f8f", trail: "#b05a5a", ink: "#5c2727", pattern: "none" },
 ];
 
 /* ============================== контракты ============================== */
@@ -234,6 +235,7 @@ export interface HudData {
   combo: number; comboMult: number;
   zone: string; danger: boolean;
   players: number;
+  meName: string;
   buffs: { power: number; speed: number };
   leaderboard: { name: string; score: number; me: boolean; level: number }[];
 }
@@ -319,17 +321,11 @@ export class Engine {
   private killer = "дикая пшеница";
   private overSent = false;
 
-  private mapCanvas: HTMLCanvasElement;
-
   constructor(canvas: HTMLCanvasElement, cfg: GameConfig, cbs: Callbacks) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d")!;
     this.cfg = cfg;
     this.cbs = cbs;
-    this.mapCanvas = document.createElement("canvas");
-    this.mapCanvas.width = 156;
-    this.mapCanvas.height = 156;
-    this.buildMinimapBase();
     this.resize();
 
     this.player = this.makePlayer();
@@ -351,6 +347,7 @@ export class Engine {
         body: this.cfg.skin.body, rim: this.cfg.skin.rim,
         blade: this.cfg.skin.blade, bladeRim: this.cfg.skin.bladeRim,
         trail: this.cfg.skin.trail,
+        ink: this.cfg.skin.ink, pattern: this.cfg.skin.pattern,
       },
       bladeAngle: 0, bladeSpin: 1,
       hitCd: 0, hurtT: 0, shieldT: 2.5,
@@ -365,15 +362,24 @@ export class Engine {
   }
 
   private makeBot(): Ent {
-    const ang = Math.random() * TAU;
-    const dist = 720 + Math.random() * 1730;
-    const x = clamp(WORLD / 2 + Math.cos(ang) * dist, 120, WORLD - 120);
-    const y = clamp(WORLD / 2 + Math.sin(ang) * dist, 120, WORLD - 120);
+    /* боты живут по всей карте, уровень растёт к окраинам */
+    let x = 140 + Math.random() * (WORLD - 280);
+    let y = 140 + Math.random() * (WORLD - 280);
+    const dist = Math.hypot(x - WORLD / 2, y - WORLD / 2);
     let level: number;
     if (dist < 1200) level = 1 + Math.floor(Math.random() * 3);
     else if (dist < 1700) level = 3 + Math.floor(Math.random() * 5);
     else if (dist < 2150) level = 6 + Math.floor(Math.random() * 7);
     else level = 10 + Math.floor(Math.random() * 16);
+    /* не даём появиться вплотную к игроку */
+    if (this.player) {
+      const pd = Math.hypot(x - this.player.x, y - this.player.y);
+      if (pd < 560) {
+        const a = Math.random() * TAU;
+        x = clamp(x + Math.cos(a) * 640, 140, WORLD - 140);
+        y = clamp(y + Math.sin(a) * 640, 140, WORLD - 140);
+      }
+    }
 
     const e: Ent = {
       id: this.nextId++,
@@ -437,6 +443,12 @@ export class Engine {
     this.mouse.y = e.clientY - r.top;
     this.mouse.on = true;
   };
+  private onMouseDown = (e: MouseEvent) => {
+    if (e.button === 0) this.boostHeld = true;
+  };
+  private onMouseUp = (e: MouseEvent) => {
+    if (e.button === 0) this.boostHeld = false;
+  };
   private onResize = () => this.resize();
   private onBlur = () => {
     this.keys.clear();
@@ -447,6 +459,8 @@ export class Engine {
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
     window.addEventListener("mousemove", this.onMouseMove);
+    window.addEventListener("mousedown", this.onMouseDown);
+    window.addEventListener("mouseup", this.onMouseUp);
     window.addEventListener("resize", this.onResize);
     window.addEventListener("blur", this.onBlur);
     this.last = performance.now();
@@ -468,6 +482,8 @@ export class Engine {
     window.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("keyup", this.onKeyUp);
     window.removeEventListener("mousemove", this.onMouseMove);
+    window.removeEventListener("mousedown", this.onMouseDown);
+    window.removeEventListener("mouseup", this.onMouseUp);
     window.removeEventListener("resize", this.onResize);
     window.removeEventListener("blur", this.onBlur);
   }
@@ -836,8 +852,8 @@ export class Engine {
 
     /* --- ускорение --- */
     this.boosting = this.boostHeld && this.boost > 2 && il > 0.1;
-    if (this.boosting) this.boost = Math.max(0, this.boost - 34 * dt);
-    else this.boost = Math.min(100, this.boost + 21 * dt);
+    if (this.boosting) this.boost = Math.max(0, this.boost - 30 * dt);
+    else this.boost = Math.min(100, this.boost + 17 * dt);
     const spd = this.playerSpeed() * def.slow * (this.boosting ? 1.75 : 1);
     p.vx += (ix * spd - p.vx) * Math.min(1, dt * 9);
     p.vy += (iy * spd - p.vy) * Math.min(1, dt * 9);
@@ -1228,6 +1244,7 @@ export class Engine {
       zone: BIOMES[this.curZone].name,
       danger: biomeAt(p.x, p.y) === "magma" && p.level < 12,
       players: this.bots.length + 1,
+      meName: p.name,
       buffs: {
         power: Math.max(0, Math.round(p.buffs.power * 10) / 10),
         speed: Math.max(0, Math.round(p.buffs.speed * 10) / 10),
@@ -1504,6 +1521,91 @@ export class Engine {
     }
   }
 
+  /* узор на теле скина (полосы, горох, клетка, зигзаг, кольца, пятна) */
+  private drawPattern(e: Ent) {
+    const ctx = this.ctx;
+    const r = e.radius;
+    const rnd = mulberry32(e.id * 7919 + 13);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, r - 0.5, 0, TAU);
+    ctx.clip();
+    ctx.fillStyle = e.skin.ink;
+    ctx.strokeStyle = e.skin.ink;
+    switch (e.skin.pattern) {
+      case "stripes": {
+        ctx.translate(e.x, e.y);
+        ctx.rotate(-Math.PI / 4 + e.id);
+        for (let i = -3; i <= 3; i++) {
+          ctx.fillRect(-r * 2, i * r * 0.52 - r * 0.1, r * 4, r * 0.2);
+        }
+        break;
+      }
+      case "dots": {
+        for (let gy = -2; gy <= 2; gy++) {
+          for (let gx = -2; gx <= 2; gx++) {
+            const px = e.x + gx * r * 0.5 + (gy % 2 === 0 ? 0 : r * 0.25);
+            const py = e.y + gy * r * 0.46;
+            if ((px - e.x) ** 2 + (py - e.y) ** 2 > r * r) continue;
+            ctx.beginPath();
+            ctx.arc(px, py, r * 0.11, 0, TAU);
+            ctx.fill();
+          }
+        }
+        break;
+      }
+      case "checker": {
+        const s = r * 0.42;
+        for (let gy = -3; gy <= 3; gy++) {
+          for (let gx = -3; gx <= 3; gx++) {
+            if ((gx + gy) % 2 === 0) continue;
+            ctx.fillRect(e.x + gx * s, e.y + gy * s, s, s);
+          }
+        }
+        break;
+      }
+      case "zigzag": {
+        ctx.lineWidth = r * 0.12;
+        ctx.lineJoin = "round";
+        for (let row = -2; row <= 2; row++) {
+          const y0 = e.y + row * r * 0.5;
+          ctx.beginPath();
+          for (let k = -3; k <= 3; k++) {
+            const px = e.x + k * r * 0.32;
+            const py = y0 + (k % 2 === 0 ? -r * 0.13 : r * 0.13);
+            if (k === -3) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+        }
+        break;
+      }
+      case "rings": {
+        ctx.lineWidth = r * 0.13;
+        for (const rr of [0.32, 0.66]) {
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, r * rr, 0, TAU);
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, r * 0.1, 0, TAU);
+        ctx.fill();
+        break;
+      }
+      case "patches": {
+        for (let k = 0; k < 4; k++) {
+          const a = rnd() * TAU;
+          const d = rnd() * r * 0.55;
+          ctx.beginPath();
+          ctx.arc(e.x + Math.cos(a) * d, e.y + Math.sin(a) * d, r * (0.2 + rnd() * 0.16), 0, TAU);
+          ctx.fill();
+        }
+        break;
+      }
+    }
+    ctx.restore();
+  }
+
   private drawEnt(e: Ent) {
     const ctx = this.ctx;
     if (e.dead) return;
@@ -1561,6 +1663,7 @@ export class Engine {
     ctx.arc(e.x, e.y, e.radius, 0, TAU);
     ctx.fillStyle = e.skin.body;
     ctx.fill();
+    if (e.skin.pattern !== "none") this.drawPattern(e);
     ctx.lineWidth = 3;
     ctx.strokeStyle = e.skin.rim;
     ctx.stroke();
@@ -1639,58 +1742,5 @@ export class Engine {
     }
   }
 
-  /* ---------- миникарта ---------- */
 
-  private buildMinimapBase() {
-    const c = this.mapCanvas.getContext("2d")!;
-    const s = 156 / WORLD;
-    c.fillStyle = "#0d2110";
-    c.fillRect(0, 0, 156, 156);
-    for (const z of ZONES) {
-      c.fillStyle = BIOMES[z.biome].ground;
-      c.globalAlpha = 0.85;
-      if (z.kind === "circle") {
-        c.beginPath();
-        c.arc(z.x * s, z.y * s, z.r * s, 0, TAU);
-        c.fill();
-      } else {
-        c.fillRect(z.x * s, z.y * s, z.w * s, z.h * s);
-      }
-    }
-    c.globalAlpha = 1;
-    c.strokeStyle = "#2a5a30";
-    c.lineWidth = 2;
-    c.strokeRect(1, 1, 154, 154);
-  }
-
-  renderMinimap(target: HTMLCanvasElement) {
-    const c = target.getContext("2d");
-    if (!c) return;
-    const s = target.width / WORLD;
-    c.clearRect(0, 0, target.width, target.height);
-    c.drawImage(this.mapCanvas, 0, 0, target.width, target.height);
-    for (const pt of this.potions) {
-      c.fillStyle = POTION_COLORS[pt.kind];
-      c.beginPath();
-      c.arc(pt.x * s, pt.y * s, 2.4, 0, TAU);
-      c.fill();
-    }
-    for (const b of this.bots) {
-      c.fillStyle =
-        b.level > this.player.level + 1 ? "#ff5340" : b.level < this.player.level - 1 ? "#8def4a" : "#ffd23f";
-      c.beginPath();
-      c.arc(b.x * s, b.y * s, 3, 0, TAU);
-      c.fill();
-    }
-    const p = this.player;
-    c.fillStyle = "#ffffff";
-    c.beginPath();
-    c.arc(p.x * s, p.y * s, 4, 0, TAU);
-    c.fill();
-    c.strokeStyle = "rgba(255,255,255,0.7)";
-    c.lineWidth = 1.5;
-    c.beginPath();
-    c.arc(p.x * s, p.y * s, 6 + Math.sin(this.animT * 5) * 2, 0, TAU);
-    c.stroke();
-  }
 }
