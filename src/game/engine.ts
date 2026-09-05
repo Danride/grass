@@ -1039,10 +1039,11 @@ export class Engine {
         b.strafeT = 1.2 + Math.random() * 1.4;
       }
 
-      /* --- оценка обстановки --- */
+      /* --- оценка обстановки: цель — убивать всех --- */
+      const hpFrac = b.hp / b.maxHp;
       const bPow = b.dmg * (b.buffs.power > 0 ? 1.4 : 1);
       let threat: Ent | null = null;
-      let threatD = 340 * 340;
+      let threatD = 300 * 300;
       let prey: Ent | null = null;
       let preyScore = Infinity;
       let nearest: Ent | null = null;
@@ -1053,14 +1054,16 @@ export class Engine {
         const d2 = dx * dx + dy * dy;
         if (d2 < nearestD) { nearest = o; nearestD = d2; }
         const oPow = o.dmg * (o.buffs.power > 0 ? 1.4 : 1);
-        if (oPow > bPow * 1.08 && d2 < threatD) { threat = o; threatD = d2; }
-        if (oPow < bPow * 1.15) {
-          let score = d2;
-          if (o.hp < o.maxHp * 0.55) score *= 0.45; /* добивай раненых */
-          if (o.hurtT > 0.1) score *= 0.6;          /* помогай добивать — шакаль */
-          if (o.isPlayer) score *= 0.78;            /* игрок — главная цель */
-          if (score < preyScore) { prey = o; preyScore = score; }
-        }
+        /* бегут только от явно сильнейших (или будучи на ладан) */
+        const scary = oPow > bPow * 1.3 || (oPow > bPow * 1.08 && hpFrac < 0.4);
+        if (scary && d2 < threatD) { threat = o; threatD = d2; }
+        /* добыча — любой: слабым и раненым приоритет */
+        let score = d2;
+        if (oPow < bPow) score *= 0.45;
+        if (o.hp < o.maxHp * 0.55) score *= 0.38; /* добивай раненых */
+        if (o.hurtT > 0.1) score *= 0.6;          /* помогай добивать — шакаль */
+        if (o.isPlayer) score *= 0.8;             /* игрок — лакомая цель */
+        if (score < preyScore) { prey = o; preyScore = score; }
       }
 
       /* --- ближайшее зелье --- */
@@ -1071,7 +1074,6 @@ export class Engine {
         const d2 = dx * dx + dy * dy;
         if (d2 < potD) { pot = pt; potD = d2; }
       }
-      const hpFrac = b.hp / b.maxHp;
       const wantsPot =
         pot &&
         ((pot.kind === "heal" && hpFrac < 0.72) ||
@@ -1104,7 +1106,7 @@ export class Engine {
         const d = Math.hypot(dx, dy) || 1;
         mx = dx / d; my = dy / d;
         spdMul = 1.12;
-      } else if (prey && preyScore < 430 * 430 && hpFrac > 0.33) {
+      } else if (prey && preyScore < 520 * 520 && hpFrac > 0.33) {
         /* ОХОТА: сближение + стрейф по дуге, у цели — кружение */
         b.tactic = "hunt";
         const dx = prey.x - b.x, dy = prey.y - b.y;
@@ -1136,27 +1138,21 @@ export class Engine {
         mx = ax / al; my = ay / al;
         spdMul = 0.95;
       } else {
-        /* БЛУЖДАНИЕ: слабые тянутся к центру, сильные — на окраины */
+        /* БЛУЖДАНИЕ: дальние переходы по всей карте */
         b.tactic = "roam";
         b.retarget -= dt;
         if (b.retarget <= 0) {
-          b.retarget = 2 + Math.random() * 2.5;
-          const bias = b.level < 6 ? 0.35 : -0.15;
-          b.tx = clamp(
-            b.x + (Math.random() - 0.5) * 900 + (WORLD / 2 - b.x) * bias,
-            120, WORLD - 120
-          );
-          b.ty = clamp(
-            b.y + (Math.random() - 0.5) * 900 + (WORLD / 2 - b.y) * bias,
-            120, WORLD - 120
-          );
+          b.retarget = 5 + Math.random() * 6;
+          b.tx = 160 + Math.random() * (WORLD - 320);
+          b.ty = 160 + Math.random() * (WORLD - 320);
         }
         const dx = b.tx - b.x, dy = b.ty - b.y;
         const d = Math.hypot(dx, dy);
-        if (d > 12) {
+        if (d > 24) {
           mx = dx / d; my = dy / d;
-          spdMul = 0.8;
+          spdMul = 0.85;
         } else {
+          b.retarget = 0.5; /* дошёл — скоро выберет новую точку */
           mx = 0; my = 0;
         }
       }
@@ -1634,9 +1630,9 @@ export class Engine {
     ctx.save();
     if (blink) ctx.globalAlpha = 0.55;
 
-    /* рукояти кос */
-    for (let k = 0; k < 2; k++) {
-      const ang = e.bladeAngle + k * Math.PI;
+    /* одна коса */
+    {
+      const ang = e.bladeAngle;
       const ex = e.x + Math.cos(ang) * e.radius * 0.7;
       const ey = e.y + Math.sin(ang) * e.radius * 0.7;
       const tx = e.x + Math.cos(ang) * (e.bladeR - 6);
@@ -1672,22 +1668,6 @@ export class Engine {
     ctx.strokeStyle = "rgba(255,255,255,0.28)";
     ctx.lineWidth = e.radius * 0.16;
     ctx.stroke();
-
-    /* глаза */
-    const exo = Math.cos(e.dir) * e.radius * 0.32;
-    const eyo = Math.sin(e.dir) * e.radius * 0.32;
-    for (const s of [-0.55, 0.55]) {
-      const px = e.x + Math.cos(e.dir + s) * e.radius * 0.42 + exo * 0.4;
-      const py = e.y + Math.sin(e.dir + s) * e.radius * 0.42 + eyo * 0.4;
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.arc(px, py, e.radius * 0.24, 0, TAU);
-      ctx.fill();
-      ctx.fillStyle = "#10240f";
-      ctx.beginPath();
-      ctx.arc(px + exo * 0.35, py + eyo * 0.35, e.radius * 0.12, 0, TAU);
-      ctx.fill();
-    }
 
     /* вспышка урона */
     if (e.hurtT > 0) {

@@ -482,9 +482,8 @@ function SkinPreview({ skin }: { skin: SkinDef }) {
     <div className="relative mx-auto h-16 w-16">
       <svg viewBox="0 0 72 72" className="h-full w-full">
         <defs>{defs}</defs>
-        {/* рукояти кос */}
+        {/* одна коса */}
         <rect x="33.5" y="4" width="5" height="64" rx="2.5" fill="#6b4a1f" transform="rotate(45 36 36)" />
-        <rect x="33.5" y="4" width="5" height="64" rx="2.5" fill="#6b4a1f" transform="rotate(-45 36 36)" />
         {/* лезвие */}
         <rect x="52" y="30" width="17" height="9" rx="4.5" fill={skin.blade} stroke={skin.bladeRim} strokeWidth="1.5" />
         {/* тело с узором */}
@@ -505,11 +504,6 @@ function SkinPreview({ skin }: { skin: SkinDef }) {
         )}
         {/* блик */}
         <path d="M22 26a17 17 0 0 1 10-8" stroke="rgba(255,255,255,0.35)" strokeWidth="4" strokeLinecap="round" fill="none" />
-        {/* глаза */}
-        <circle cx="30" cy="32" r="4.4" fill="#fff" />
-        <circle cx="42" cy="32" r="4.4" fill="#fff" />
-        <circle cx="31.6" cy="32.6" r="2" fill="#10240f" />
-        <circle cx="43.6" cy="32.6" r="2" fill="#10240f" />
       </svg>
       {skin.pattern !== "none" && (
         <span className="absolute -top-1 left-1/2 -translate-x-1/2 rounded bg-pit-800 px-1.5 py-px font-display text-[8px] uppercase tracking-wider text-sun-300 border border-[#6b4a1f]">
