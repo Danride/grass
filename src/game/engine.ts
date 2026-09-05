@@ -388,7 +388,7 @@ export class Engine {
       x, y, vx: 0, vy: 0, dir: Math.random() * TAU,
       level, xp: 0, score: level * level * 12,
       hp: 100, maxHp: 100, dmg: 8,
-      radius: 16, bladeR: 44, speed: 150 + Math.random() * 45,
+      radius: 16, bladeR: 44, speed: 158 + Math.random() * 52,
       skin: BOT_SKINS[Math.floor(Math.random() * BOT_SKINS.length)],
       bladeAngle: Math.random() * TAU, bladeSpin: Math.random() < 0.5 ? 1 : -1,
       hitCd: 0, hurtT: 0, shieldT: 1.5,
@@ -703,8 +703,13 @@ export class Engine {
   private tryHit(a: Ent, b: Ent) {
     if (a.hitCd > 0 || b.dead || a.dead) return;
     if (b.shieldT > 0) return;
-    const rr = a.bladeR + b.radius;
-    const dx = b.x - a.x, dy = b.y - a.y;
+    /* урон только если само лезвие (кончик косы) касается тела —
+       столкновение корпусов без касания лезвия урона не наносит */
+    const tipX = a.x + Math.cos(a.bladeAngle) * (a.bladeR - 6);
+    const tipY = a.y + Math.sin(a.bladeAngle) * (a.bladeR - 6);
+    const bladeHit = a.radius * 0.68 + 4;
+    const dx = b.x - tipX, dy = b.y - tipY;
+    const rr = bladeHit + b.radius;
     const d2 = dx * dx + dy * dy;
     if (d2 > rr * rr) return;
     a.hitCd = 0.45;
@@ -712,11 +717,14 @@ export class Engine {
     const dmg = a.dmg * (a.buffs.power > 0 ? 1.4 : 1) * (0.85 + Math.random() * 0.3);
     b.hp -= dmg;
     b.hurtT = 0.35;
-    b.vx += (dx / d) * 300;
-    b.vy += (dy / d) * 300;
-    const mx = a.x + (dx / d) * a.bladeR;
-    const my = a.y + (dy / d) * a.bladeR;
-    this.spawnSparks(mx, my, b.isPlayer ? "#ff7059" : "#eef9e2");
+    /* отбрасывание от корпуса владельца косы */
+    const kx = b.x - a.x, ky = b.y - a.y;
+    const kd = Math.hypot(kx, ky) || 1;
+    b.vx += (kx / kd) * 300;
+    b.vy += (ky / kd) * 300;
+    const mx = tipX + (dx / d) * bladeHit * 0.8;
+    const my = tipY + (dy / d) * bladeHit * 0.8;
+    this.spawnSparks(mx, my, b.isPlayer ? "#ff7059" : "#f2e0b0");
     if (b.isPlayer) {
       sfx.hurt();
       buzz(45);
@@ -1031,7 +1039,7 @@ export class Engine {
       b.dashCd = Math.max(0, b.dashCd - dt);
       b.buffs.power = Math.max(0, b.buffs.power - dt);
       b.buffs.speed = Math.max(0, b.buffs.speed - dt);
-      b.bladeAngle += b.bladeSpin * (4.5 + b.level * 0.1) * dt;
+      b.bladeAngle += b.bladeSpin * (5.4 + b.level * 0.15) * dt;
       b.hp = Math.min(b.maxHp, b.hp + 0.8 * dt);
       b.strafeT -= dt;
       if (b.strafeT <= 0) {
@@ -1054,14 +1062,14 @@ export class Engine {
         const d2 = dx * dx + dy * dy;
         if (d2 < nearestD) { nearest = o; nearestD = d2; }
         const oPow = o.dmg * (o.buffs.power > 0 ? 1.4 : 1);
-        /* бегут только от явно сильнейших (или будучи на ладан) */
-        const scary = oPow > bPow * 1.3 || (oPow > bPow * 1.08 && hpFrac < 0.4);
+        /* бегут только от заметно сильнейших — боты злые и держатся до конца */
+        const scary = oPow > bPow * 1.35 || (oPow > bPow * 1.1 && hpFrac < 0.3);
         if (scary && d2 < threatD) { threat = o; threatD = d2; }
-        /* добыча — любой: слабым и раненым приоритет */
+        /* добыча — любой: слабым, раненым и ближним приоритет */
         let score = d2;
-        if (oPow < bPow) score *= 0.45;
-        if (o.hp < o.maxHp * 0.55) score *= 0.38; /* добивай раненых */
-        if (o.hurtT > 0.1) score *= 0.6;          /* помогай добивать — шакаль */
+        if (oPow < bPow) score *= 0.4;
+        if (o.hp < o.maxHp * 0.6) score *= 0.35;  /* добивай раненых */
+        if (o.hurtT > 0.1) score *= 0.5;          /* шакаль: помогай добивать */
         if (o.isPlayer) score *= 0.8;             /* игрок — лакомая цель */
         if (score < preyScore) { prey = o; preyScore = score; }
       }
@@ -1085,8 +1093,8 @@ export class Engine {
       let mx = 0, my = 0;
       let spdMul = 0.8;
 
-      if (threat && threatD < 330 * 330) {
-        /* БЕГСТВО: от сильного, с рывком в упор */
+      if (threat && (threatD < 240 * 240 || hpFrac < 0.2)) {
+        /* БЕГСТВО: только от заметно сильного, с рывком в упор */
         b.tactic = "flee";
         const d = Math.sqrt(threatD) || 1;
         b.tx = b.x - ((threat.x - b.x) / d) * 520;
@@ -1098,33 +1106,45 @@ export class Engine {
         const dx = b.tx - b.x, dy = b.ty - b.y;
         const d2 = Math.hypot(dx, dy) || 1;
         mx = dx / d2; my = dy / d2;
-        spdMul = 1.28 * (b.dashT > 0 ? 1.85 : 1);
+        spdMul = 1.3 * (b.dashT > 0 ? 1.85 : 1);
       } else if (wantsPot && pot) {
         /* МАРОДЁР: за зельем */
         b.tactic = "loot";
         const dx = pot.x - b.x, dy = pot.y - b.y;
         const d = Math.hypot(dx, dy) || 1;
         mx = dx / d; my = dy / d;
-        spdMul = 1.12;
-      } else if (prey && preyScore < 520 * 520 && hpFrac > 0.33) {
-        /* ОХОТА: сближение + стрейф по дуге, у цели — кружение */
+        spdMul = 1.15;
+      } else if (prey && preyScore < 640 * 640 && hpFrac > 0.25) {
+        /* ОХОТА: упреждение по движению жертвы, стрейф, рывки на сближение */
         b.tactic = "hunt";
-        const dx = prey.x - b.x, dy = prey.y - b.y;
-        const d = Math.hypot(dx, dy) || 1;
-        const close = d < b.bladeR + prey.radius + 30;
-        let ax = dx / d, ay = dy / d;
+        const dx0 = prey.x - b.x, dy0 = prey.y - b.y;
+        const d0 = Math.hypot(dx0, dy0) || 1;
+        /* целимся туда, где жертва окажется через мгновение */
+        const tLead = Math.min(d0 / (b.speed * 1.15), 0.85);
+        const lx = prey.x + prey.vx * tLead - b.x;
+        const ly = prey.y + prey.vy * tLead - b.y;
+        const d = Math.hypot(lx, ly) || 1;
+        const close = d < b.bladeR + prey.radius + 36;
+        let ax = lx / d, ay = ly / d;
         const px = -ay * b.strafe, py = ax * b.strafe;
         if (close) {
-          ax = px * 1.15 + ax * 0.25;
-          ay = py * 1.15 + ay * 0.25;
+          /* у цели — кружим, подставляя лезвие */
+          ax = px * 1.25 + ax * 0.2;
+          ay = py * 1.25 + ay * 0.2;
         } else {
-          ax = ax + px * 0.5;
-          ay = ay + py * 0.5;
+          ax = ax + px * 0.4;
+          ay = ay + py * 0.4;
         }
         const al = Math.hypot(ax, ay) || 1;
         mx = ax / al; my = ay / al;
-        spdMul = close ? 1.18 : 1.06;
-      } else if (hpFrac < 0.45) {
+        spdMul = close ? 1.3 : 1.18;
+        /* агрессивный рывок, чтобы догнать */
+        if (!close && d0 < 300 && b.dashCd <= 0) {
+          b.dashT = 0.35;
+          b.dashCd = 2.6;
+        }
+        if (b.dashT > 0) spdMul *= 1.7;
+      } else if (hpFrac < 0.3) {
         /* ЛЕЧЕНИЕ: подальше от всех, к центру, переждать */
         b.tactic = "heal";
         let ax = (WORLD / 2 - b.x) * 0.35;
@@ -1150,11 +1170,22 @@ export class Engine {
         const d = Math.hypot(dx, dy);
         if (d > 24) {
           mx = dx / d; my = dy / d;
-          spdMul = 0.85;
+          spdMul = 0.92;
         } else {
           b.retarget = 0.5; /* дошёл — скоро выберет новую точку */
           mx = 0; my = 0;
         }
+      }
+
+      /* слабые не стоят в Пепелищах — обходят опасность */
+      if (b.level < 12 && biomeAt(b.x, b.y) === "magma") {
+        const ax = b.x - 4560, ay = b.y - 4560;
+        const al = Math.hypot(ax, ay) || 1;
+        mx = mx * 0.3 + (ax / al) * 1.1;
+        my = my * 0.3 + (ay / al) * 1.1;
+        const ml = Math.hypot(mx, my) || 1;
+        mx /= ml; my /= ml;
+        spdMul = Math.max(spdMul, 1.12);
       }
 
       if (mx !== 0 || my !== 0) {
@@ -1517,91 +1548,6 @@ export class Engine {
     }
   }
 
-  /* узор на теле скина (полосы, горох, клетка, зигзаг, кольца, пятна) */
-  private drawPattern(e: Ent) {
-    const ctx = this.ctx;
-    const r = e.radius;
-    const rnd = mulberry32(e.id * 7919 + 13);
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(e.x, e.y, r - 0.5, 0, TAU);
-    ctx.clip();
-    ctx.fillStyle = e.skin.ink;
-    ctx.strokeStyle = e.skin.ink;
-    switch (e.skin.pattern) {
-      case "stripes": {
-        ctx.translate(e.x, e.y);
-        ctx.rotate(-Math.PI / 4 + e.id);
-        for (let i = -3; i <= 3; i++) {
-          ctx.fillRect(-r * 2, i * r * 0.52 - r * 0.1, r * 4, r * 0.2);
-        }
-        break;
-      }
-      case "dots": {
-        for (let gy = -2; gy <= 2; gy++) {
-          for (let gx = -2; gx <= 2; gx++) {
-            const px = e.x + gx * r * 0.5 + (gy % 2 === 0 ? 0 : r * 0.25);
-            const py = e.y + gy * r * 0.46;
-            if ((px - e.x) ** 2 + (py - e.y) ** 2 > r * r) continue;
-            ctx.beginPath();
-            ctx.arc(px, py, r * 0.11, 0, TAU);
-            ctx.fill();
-          }
-        }
-        break;
-      }
-      case "checker": {
-        const s = r * 0.42;
-        for (let gy = -3; gy <= 3; gy++) {
-          for (let gx = -3; gx <= 3; gx++) {
-            if ((gx + gy) % 2 === 0) continue;
-            ctx.fillRect(e.x + gx * s, e.y + gy * s, s, s);
-          }
-        }
-        break;
-      }
-      case "zigzag": {
-        ctx.lineWidth = r * 0.12;
-        ctx.lineJoin = "round";
-        for (let row = -2; row <= 2; row++) {
-          const y0 = e.y + row * r * 0.5;
-          ctx.beginPath();
-          for (let k = -3; k <= 3; k++) {
-            const px = e.x + k * r * 0.32;
-            const py = y0 + (k % 2 === 0 ? -r * 0.13 : r * 0.13);
-            if (k === -3) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
-          }
-          ctx.stroke();
-        }
-        break;
-      }
-      case "rings": {
-        ctx.lineWidth = r * 0.13;
-        for (const rr of [0.32, 0.66]) {
-          ctx.beginPath();
-          ctx.arc(e.x, e.y, r * rr, 0, TAU);
-          ctx.stroke();
-        }
-        ctx.beginPath();
-        ctx.arc(e.x, e.y, r * 0.1, 0, TAU);
-        ctx.fill();
-        break;
-      }
-      case "patches": {
-        for (let k = 0; k < 4; k++) {
-          const a = rnd() * TAU;
-          const d = rnd() * r * 0.55;
-          ctx.beginPath();
-          ctx.arc(e.x + Math.cos(a) * d, e.y + Math.sin(a) * d, r * (0.2 + rnd() * 0.16), 0, TAU);
-          ctx.fill();
-        }
-        break;
-      }
-    }
-    ctx.restore();
-  }
-
   private drawEnt(e: Ent) {
     const ctx = this.ctx;
     if (e.dead) return;
@@ -1613,60 +1559,54 @@ export class Engine {
     ctx.ellipse(e.x, e.y + e.radius * 0.55, e.radius * 1.05, e.radius * 0.42, 0, 0, TAU);
     ctx.fill();
 
-    /* аура зелья */
+    /* метка зелья — простое кольцо */
     if (e.buffs.power > 0 || e.buffs.speed > 0) {
-      const col = e.buffs.power > 0 ? "#ff5340" : "#59dcff";
-      ctx.save();
-      ctx.globalAlpha = 0.5 + 0.3 * Math.sin(this.animT * 6);
-      ctx.strokeStyle = col;
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash([5, 6]);
+      ctx.globalAlpha = 0.55;
+      ctx.strokeStyle = e.buffs.power > 0 ? "#ff5340" : "#4ac6ff";
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(e.x, e.y, e.radius + 10, this.animT * 3, this.animT * 3 + TAU);
+      ctx.arc(e.x, e.y, e.radius + 6, 0, TAU);
       ctx.stroke();
-      ctx.restore();
+      ctx.globalAlpha = 1;
     }
 
     ctx.save();
     if (blink) ctx.globalAlpha = 0.55;
 
-    /* одна коса */
+    /* коса: рукоять + простая дуга-лезвие */
     {
       const ang = e.bladeAngle;
-      const ex = e.x + Math.cos(ang) * e.radius * 0.7;
-      const ey = e.y + Math.sin(ang) * e.radius * 0.7;
+      const hx = e.x + Math.cos(ang) * e.radius * 0.55;
+      const hy = e.y + Math.sin(ang) * e.radius * 0.55;
       const tx = e.x + Math.cos(ang) * (e.bladeR - 6);
       const ty = e.y + Math.sin(ang) * (e.bladeR - 6);
       ctx.strokeStyle = "#6b4a1f";
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 3.5;
+      ctx.lineCap = "round";
       ctx.beginPath();
-      ctx.moveTo(ex, ey);
+      ctx.moveTo(hx, hy);
       ctx.lineTo(tx, ty);
       ctx.stroke();
+      const br = e.radius * 0.42;
       ctx.beginPath();
-      ctx.arc(tx, ty, e.radius * 0.72 + 5, ang - 1.9, ang + 1.2);
-      ctx.arc(tx, ty, (e.radius * 0.72 + 5) * 0.42, ang + 1.2, ang - 1.9, true);
-      ctx.closePath();
-      ctx.fillStyle = e.skin.blade;
-      ctx.fill();
+      ctx.arc(tx, ty, br, ang - 1.75, ang + 1.75);
+      ctx.lineWidth = e.radius * 0.5;
       ctx.strokeStyle = e.skin.bladeRim;
-      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(tx, ty, br, ang - 1.75, ang + 1.75);
+      ctx.lineWidth = e.radius * 0.34;
+      ctx.strokeStyle = e.skin.blade;
       ctx.stroke();
     }
 
-    /* тело */
+    /* тело — простой кружок с ободком */
     ctx.beginPath();
     ctx.arc(e.x, e.y, e.radius, 0, TAU);
     ctx.fillStyle = e.skin.body;
     ctx.fill();
-    if (e.skin.pattern !== "none") this.drawPattern(e);
     ctx.lineWidth = 3;
     ctx.strokeStyle = e.skin.rim;
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(e.x - e.radius * 0.3, e.y - e.radius * 0.35, e.radius * 0.55, Math.PI * 0.9, Math.PI * 1.6);
-    ctx.strokeStyle = "rgba(255,255,255,0.28)";
-    ctx.lineWidth = e.radius * 0.16;
     ctx.stroke();
 
     /* вспышка урона */
@@ -1677,17 +1617,6 @@ export class Engine {
       ctx.arc(e.x, e.y, e.radius, 0, TAU);
       ctx.fill();
       ctx.globalAlpha = blink ? 0.55 : 1;
-    }
-
-    /* щит */
-    if (e.shieldT > 0) {
-      ctx.setLineDash([6, 6]);
-      ctx.strokeStyle = "rgba(179,248,119,0.8)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(e.x, e.y, e.radius + 7, this.animT * 2, this.animT * 2 + TAU);
-      ctx.stroke();
-      ctx.setLineDash([]);
     }
     ctx.restore();
 

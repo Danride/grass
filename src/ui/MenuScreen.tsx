@@ -353,10 +353,12 @@ function SkinPreview({ skin }: { skin: SkinDef }) {
     <div className="relative mx-auto h-16 w-16">
       <svg viewBox="0 0 72 72" className="h-full w-full">
         <defs>{defs}</defs>
-        {/* одна коса */}
-        <rect x="33.5" y="4" width="5" height="64" rx="2.5" fill="#6b4a1f" transform="rotate(45 36 36)" />
-        {/* лезвие */}
-        <rect x="52" y="30" width="17" height="9" rx="4.5" fill={skin.blade} stroke={skin.bladeRim} strokeWidth="1.5" />
+        {/* коса: рукоять + дуга-лезвие */}
+        <g transform="rotate(45 36 36)">
+          <rect x="34" y="14" width="4.5" height="48" rx="2.2" fill="#6b4a1f" />
+          <path d="M 22 16 A 14 14 0 1 1 50 16" fill="none" stroke={skin.bladeRim} strokeWidth="11" strokeLinecap="round" />
+          <path d="M 22 16 A 14 14 0 1 1 50 16" fill="none" stroke={skin.blade} strokeWidth="7" strokeLinecap="round" />
+        </g>
         {/* тело с узором */}
         <circle cx="36" cy="36" r="24" fill={fill} stroke={skin.rim} strokeWidth="3" />
         {skin.pattern === "rings" && (
